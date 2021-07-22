@@ -9,7 +9,7 @@ While looking up different audio visualizers I came across an image for a ring b
 Simple add an mp3 song to the data folder and update the song file, song name, and song author within the sketch to see the visualiztion. The royalty free song Slow Motion from www.bensound.com is used as default sound source. 
 </p>
 <p align="center">
-<!--   <img width="700" align="center" src="https://github.com/yahirRendon/Creative_Coding/blob/main/Processing/Instagram_Filter_Sine_Particles/instagramFilterSineParticleDemo.gif" alt="demo"/> -->
+  <img width="700" align="center" src="https://github.com/yahirRendon/Creative_Coding/blob/main/Processing/Visualizer_Rings_Solo_Static_Public/Viz_Ring_Static_Gif.gif" alt="demo"/>
 </p>
 
 
