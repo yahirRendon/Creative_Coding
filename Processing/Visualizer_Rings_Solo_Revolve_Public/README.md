@@ -1,4 +1,4 @@
-<h1 align="center">Ring Audio Visualizer - Static</h1>
+<h1 align="center">Ring Audio Visualizer - Revolve</h1>
 
 <p align="center">
  This is a different interpretation of my first audio visualizer ring. In the original every angle that makes up points on the outer ring has a fixed frequency band that is being sampled for peaks. In this version the ring is being created by plotting points as the angle value increments. This creates a revolving band in the form of a ring. 
