@@ -12,6 +12,7 @@
 <br>- Press 'c' or 'C' to clear the board</p>
 <p align="center">
   <img width="700" align="center" src="https://github.com/yahirRendon/Creative_Coding/blob/main/Processing/Game_of_Life_Image/data/game_of_life_image_gitgif.gif" alt="demo"/>
+  <br>Photo by <a href="https://www.pexels.com/photo/women-hugging-each-other-4557876/?utm_content=attributionCopyText&utm_medium=referral&utm_source=pexels">Anna Shvets</a> from <a href="https://www.pexels.com/">Pexels</a> 
 </p>
 
 
