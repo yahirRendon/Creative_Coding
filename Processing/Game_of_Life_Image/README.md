@@ -11,6 +11,7 @@
 <br>- Press SPACE again to pause evolution
 <br>- Press 'c' or 'C' to clear the board</p>
 <p align="center">
+  <img width="700" align="center" src="https://github.com/yahirRendon/Creative_Coding/blob/main/Processing/Game_of_Life_Image/data/game_of_life_image_gitgif.gif" alt="demo"/>
 </p>
 
 
