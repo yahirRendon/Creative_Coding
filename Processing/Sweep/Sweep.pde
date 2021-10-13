@@ -217,7 +217,11 @@ void checkFlag() {
   for(int i = 0; i < cells.size(); i++) {
     if(cells.get(i).active() && cells.get(i).getState() != 0 && flagsPlaced < 6) {
       cells.get(i).setFlag();
-      flagsPlaced++;     
+      if(cells.get(i).getFlag()) {
+        flagsPlaced++;     
+      } else {
+        flagsPlaced--;
+      }     
     }
   }
 }
