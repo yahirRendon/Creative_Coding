@@ -15,11 +15,8 @@ class Tromino {
    */
   Tromino() {
     // create tromino
-    orientation = 0; 
-    type = 0;      // #FIX this will be randomized
-
     tromino = new ArrayList<Block>();
-    createNew();
+    createNew(int(random(0, 2)));
   }
 
 
@@ -308,22 +305,21 @@ class Tromino {
     }
   }
 
-  void createNew() {
+  void createNew(int _t) {
     orientation = 0; 
-    type = int(random(0, 2));
-    type = 0;
+    type = _t;
 
     tromino = new ArrayList<Block>();
     switch(type) {
     case 0: // Long piece
-      tromino.add(new Block(3, 0, color(0, 150)));
-      tromino.add(new Block(3, 1, color(0, 150)));
-      tromino.add(new Block(3, 2, color(0, 150)));
+      tromino.add(new Block(3, 0, color(248, 232, 217)));
+      tromino.add(new Block(3, 1, color(248, 232, 217)));
+      tromino.add(new Block(3, 2, color(248, 232, 217)));
       break;
     case 1: // L piece
-      tromino.add(new Block(3, 1, color(0, 150)));
-      tromino.add(new Block(3, 2, color(0, 150)));
-      tromino.add(new Block(4, 2, color(0, 150)));
+      tromino.add(new Block(3, 1, color(245, 223, 186)));
+      tromino.add(new Block(3, 2, color(245, 223, 186)));
+      tromino.add(new Block(4, 2, color(245, 223, 186)));
       break;
     default:
       break;

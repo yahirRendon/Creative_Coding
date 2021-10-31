@@ -21,9 +21,10 @@ class Block {
   Block(int _x, int _y, color _c) {
     x = _x;
     y = _y;
-    blockSize = 80;
-    xPos = blockSize + _x * blockSize;
-    yPos = (_y * blockSize) - (blockSize * 3);
+    blockSize = 50;
+    xPos = 225 + _x * blockSize;
+    yPos = (0) + (_y * blockSize) - blockSize;
+    
     c = _c;
   }
 
@@ -31,8 +32,8 @@ class Block {
    * Update the pixel position of the block based on x and y position
    */
   void updatePosition() {
-    xPos = blockSize + x * blockSize;
-    yPos = (y * blockSize) - (blockSize * 3);
+    xPos = 225 + x * blockSize;
+    yPos = (0) + (y * blockSize) - blockSize;
   }
 
   /**
@@ -42,7 +43,8 @@ class Block {
     // only display if beyond the loading zone
     if (y > 2) {
       fill(c);
-      rect(xPos, yPos, blockSize, blockSize);
+      stroke(115, 138, 152);
+      rect(xPos, yPos, blockSize, blockSize, 10);
     }
   }  
 

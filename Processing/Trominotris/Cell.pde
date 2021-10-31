@@ -25,9 +25,9 @@ class Cell {
   Cell(int _x, int _y, int _s) {
     x = _x;
     y = _y;
-    cellSize = 80;
-    xPos = cellSize + _x * cellSize;
-    yPos =  (_y * cellSize) - (cellSize * 3);
+    cellSize = 50;
+    xPos = 225 + _x * cellSize;
+    yPos =  (_y * cellSize) - cellSize;
     state = _s;
   }
 
@@ -35,11 +35,10 @@ class Cell {
    * Display the block depending on state
    */
   void display() {
-    if (state == 0) {
-      fill(255);
-    } else {
-      fill(255, 0, 0);
-    }
+    if(y > 2) {
+    fill(208,210, 205);
+    noStroke();
     rect(xPos, yPos, cellSize, cellSize);
+    }
   }
 }
