@@ -24,7 +24,6 @@ class Block {
     blockSize = 50;
     xPos = 225 + _x * blockSize;
     yPos = (0) + (_y * blockSize) - blockSize;
-    
     c = _c;
   }
 

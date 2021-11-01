@@ -11,8 +11,9 @@
  - create tromino row and trominotris clear animation
  x drop speed increment
  x add point system
- - set color pallete 
- - create irregular trominoes
+ x set color pallete 
+ x create irregular trominoes
+ - game start and game over cues
  - add sounds and music
  
  **************************************************************/
@@ -88,9 +89,12 @@ void draw() {
         // block cannot move down 
         // push tromino to block list and create new
         t.pushBlocks(blocks);
-        t.createNew(nextPiece);
-        nextPiece = int(random(0, 2));
-
+        t.createNewTromino(nextPiece);
+        if(level > 0 && level % 2 == 0) {
+          nextPiece = int(random(0, 4));
+        } else {
+          nextPiece = int(random(0, 2));
+        }
         // check if rows can be cleared
         checkRows();
       }
@@ -152,13 +156,25 @@ void displayNextPiece() {
   stroke(115, 138, 152);
   switch(nextPiece) {
   case 1:
-    fill(246, 210, 174);
+    fill(157, 193, 209);
     rect(62, 350, 50, 50, 10);
     rect(62, 400, 50, 50, 10);
     rect(112, 400, 50, 50, 10);
     break;
+  case 2:
+    fill(61, 98, 124);
+    rect(112, 350, 50, 50, 10);
+    rect(62, 400, 50, 50, 10);
+    rect(62, 450, 50, 50, 10);
+  break;
+  case 3:
+    fill(232, 139, 106);
+    rect(37, 400, 50, 50, 10);
+    rect(87, 450, 50, 50, 10);
+    rect(137, 400, 50, 50, 10);
+  break;
   default:
-    fill(248, 232, 217);
+    fill(246, 210, 174);
     rect(87, 350, 50, 50, 10);
     rect(87, 400, 50, 50, 10);
     rect(87, 450, 50, 50, 10);
@@ -212,7 +228,8 @@ void checkRows() {
       }
     }
   }
-
+  
+  // check if block has settled in loading zone
   for (int x = 0; x < gridWidth; x++) {
     if (cells.get(x + 2 * gridWidth).state == 1) {
       gameOver = true;
@@ -225,7 +242,8 @@ void checkRows() {
     linesCleared = priorLinesCleared;
     dropSpeed -= 50;
   }
-
+  
+  // increment score with bonuse depending on level
   float levelBonus = map(level, 0, 10, 1, 5.0);
   if (templinesCleared == 3) {
     score += int(100 * levelBonus);

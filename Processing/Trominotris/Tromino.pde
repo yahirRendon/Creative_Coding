@@ -16,7 +16,7 @@ class Tromino {
   Tromino() {
     // create tromino
     tromino = new ArrayList<Block>();
-    createNew(int(random(0, 2)));
+    createNewTromino(int(random(0, 2)));
   }
 
 
@@ -271,6 +271,150 @@ class Tromino {
       if (orientation > 3) orientation = 0;
     }
   }
+  
+  /**
+   * rotate the irregular long Piece
+   */
+  void rotateIrregularLongPiece() {
+    // store current x and y positions for each block in tromino 
+    int x0 = tromino.get(0).x;
+    int y0 = tromino.get(0).y;
+    int x1 = tromino.get(1).x;
+    int y1 = tromino.get(1).y;
+    int x2 = tromino.get(2).x;
+    int y2 = tromino.get(2).y;
+    boolean canMove = true;
+
+    // update x and y positions to desired locations for rotation
+    switch(orientation) {      
+    case 0:   
+      y0 += 2;
+      x2 -= 1; 
+      y2 -= 1;     
+      break;
+    case 1:
+      x0 -= 2; 
+      x2 += 1; 
+      y2 -= 1;      
+      break;
+    case 2:
+      y0 -= 2; 
+      x2 += 1; 
+      y2 += 1;
+      break;
+    case 3:
+      x0 += 2; 
+      x2 -= 1; 
+      y2 += 1;
+      break;
+    default: 
+      break;
+    }
+    
+    // if any of the desired locations are either out of bounds
+    // or not in open state trigger canMove to false
+    if (!tromino.get(0).checkMove(x0, y0) ||
+      !tromino.get(1).checkMove(x1, y1) ||
+      !tromino.get(2).checkMove(x2, y2) ) {
+      canMove = false;
+    }
+
+    // if all blocks can move update the current location to the
+    // desired location and update position
+    if (canMove) {
+      tromino.get(0).x = x0;
+      tromino.get(0).y = y0;
+      tromino.get(0).updatePosition();
+      tromino.get(1).x = x1;
+      tromino.get(1).y = y1;
+      tromino.get(1).updatePosition();
+      tromino.get(2).x = x2;
+      tromino.get(2).y = y2;
+      tromino.get(2).updatePosition();
+
+      // increment orientaiton on a succesful rotation
+      orientation++;
+      if (orientation > 3) orientation = 0;
+    }
+  }
+  
+  /**
+   * rotate the irregular pyramid piece
+   */
+  void rotateIrregularPyramidPiece() {
+    // store current x and y positions for each block in tromino 
+    int x0 = tromino.get(0).x;
+    int y0 = tromino.get(0).y;
+    int x1 = tromino.get(1).x;
+    int y1 = tromino.get(1).y;
+    int x2 = tromino.get(2).x;
+    int y2 = tromino.get(2).y;
+    boolean canMove = true;
+
+    // update x and y positions to desired locations for rotation
+    switch(orientation) {      
+    case 0:   
+      x0 += 1; 
+      y0 -= 1;
+      x1 += 1;
+      y1 += 1;
+      x2 -= 1; 
+      y2 += 1;     
+      break;
+    case 1:
+      x0 += 1; 
+      y0 += 1; 
+      x1 -= 1;
+      y1 += 1;
+      x2 -= 1; 
+      y2 -= 1;      
+      break;
+    case 2:
+      x0 -= 1; 
+      y0 += 1; 
+      x1 -= 1;
+      y1 -= 1;
+      x2 += 1; 
+      y2 -= 1;
+      break;
+    case 3:
+      x0 -= 1; 
+      y0 -= 1; 
+      x1 += 1;
+      y1 -= 1;
+      x2 += 1; 
+      y2 += 1;
+      break;
+    default: 
+      break;
+    }
+    
+    // if any of the desired locations are either out of bounds
+    // or not in open state trigger canMove to false
+    if (!tromino.get(0).checkMove(x0, y0) ||
+      !tromino.get(1).checkMove(x1, y1) ||
+      !tromino.get(2).checkMove(x2, y2) ) {
+      canMove = false;
+    }
+
+    // if all blocks can move update the current location to the
+    // desired location and update position
+    if (canMove) {
+      tromino.get(0).x = x0;
+      tromino.get(0).y = y0;
+      tromino.get(0).updatePosition();
+      tromino.get(1).x = x1;
+      tromino.get(1).y = y1;
+      tromino.get(1).updatePosition();
+      tromino.get(2).x = x2;
+      tromino.get(2).y = y2;
+      tromino.get(2).updatePosition();
+
+      // increment orientaiton on a succesful rotation
+      orientation++;
+      if (orientation > 3) orientation = 0;
+    }
+  }
 
   /**
    * Rotate the tromino clockwise
@@ -279,14 +423,18 @@ class Tromino {
    */
   void rotateShape() {
     switch(type) {
-    case 0: // long piece
+    case 0: 
       rotateLongPiece();
       break;
-    case 1: // L piece
+    case 1: 
       rotateLPiece();
       break;
     case 2: 
+      rotateIrregularLongPiece();
       break;
+    case 3:
+      rotateIrregularPyramidPiece();
+    break;
     default:
       break;
     }
@@ -305,22 +453,36 @@ class Tromino {
     }
   }
 
-  void createNew(int _t) {
+  /**
+   * Create new tromino of either long piece, L piece,
+   * irregular long piece, or irregular pyramid piece
+   */
+  void createNewTromino(int _t) {
     orientation = 0; 
     type = _t;
 
     tromino = new ArrayList<Block>();
     switch(type) {
     case 0: // Long piece
-      tromino.add(new Block(3, 0, color(248, 232, 217)));
-      tromino.add(new Block(3, 1, color(248, 232, 217)));
-      tromino.add(new Block(3, 2, color(248, 232, 217)));
+      tromino.add(new Block(3, 0, color(246, 210, 174)));
+      tromino.add(new Block(3, 1, color(246, 210, 174)));
+      tromino.add(new Block(3, 2, color(246, 210, 174)));
       break;
     case 1: // L piece
-      tromino.add(new Block(3, 1, color(245, 223, 186)));
-      tromino.add(new Block(3, 2, color(245, 223, 186)));
-      tromino.add(new Block(4, 2, color(245, 223, 186)));
+      tromino.add(new Block(3, 1, color(157, 193, 209)));
+      tromino.add(new Block(3, 2, color(157, 193, 209)));
+      tromino.add(new Block(4, 2, color(157, 193, 209)));
       break;
+    case 2: // irregular long
+      tromino.add(new Block(4, 0, color(61, 98, 124)));
+      tromino.add(new Block(3, 1, color(61, 98, 124)));
+      tromino.add(new Block(3, 2, color(61, 98, 124)));
+    break;
+    case 3: // pyramid
+      tromino.add(new Block(2, 2, color(232, 139, 106)));
+      tromino.add(new Block(3, 1, color(232, 139, 106)));
+      tromino.add(new Block(4, 2, color(232, 139, 106)));
+    break;
     default:
       break;
     }
