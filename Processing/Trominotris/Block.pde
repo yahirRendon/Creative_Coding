@@ -43,6 +43,11 @@ class Block {
     if (y > 2) {
       fill(c);
       stroke(115, 138, 152);
+      if(gameOver) {
+        fill(red(c), green(c), blue(c), 75);
+        stroke(115, 138, 152);
+      } 
+      
       rect(xPos, yPos, blockSize, blockSize, 10);
     }
   }  

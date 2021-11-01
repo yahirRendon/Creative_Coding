@@ -237,7 +237,7 @@ void checkRows() {
   }
 
   // increment level per desired lines cleared
-  if (linesCleared > priorLinesCleared + 5) {
+  if (linesCleared >= priorLinesCleared + 5) {
     level++;    
     linesCleared = priorLinesCleared;
     dropSpeed -= 50;
