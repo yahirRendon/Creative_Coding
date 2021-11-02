@@ -452,10 +452,18 @@ class Tromino {
       cells.get(index).state = 1;
     }
   }
+  
+  void startLandAnimation() {
+    for (int i = 0; i < tromino.size(); i++) { 
+      tromino.get(i).hasLanded = true;
+    }
+  }
 
   /**
    * Create new tromino of either long piece, L piece,
    * irregular long piece, or irregular pyramid piece
+   *
+   * @param {int} _t   the type of tromino to create
    */
   void createNewTromino(int _t) {
     orientation = 0; 

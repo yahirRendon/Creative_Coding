@@ -9,7 +9,17 @@ class Block {
   int yPos;       // y position of the block (pixel)
   int blockSize;  // size of the block
   color c;        // color fo the block
-
+  
+  boolean hasLanded;
+  boolean landDone;
+  int strokeIn;
+  int strokeSpeed;
+  
+  boolean startClear;
+  boolean stopClear;
+  boolean doneClear;
+  int clearTime;
+  int clearFade;
 
   /**
    * Constructor method for Block class
@@ -25,6 +35,17 @@ class Block {
     xPos = 225 + _x * blockSize;
     yPos = (0) + (_y * blockSize) - blockSize;
     c = _c;
+    
+    hasLanded = false;
+    landDone = false;
+    strokeIn = 0;
+    strokeSpeed = 1;
+    
+    startClear = false;
+    stopClear = false;
+    doneClear = false;
+    clearTime = 0;
+    clearFade = 0;
   }
 
   /**
@@ -41,14 +62,53 @@ class Block {
   void display() {
     // only display if beyond the loading zone
     if (y > 2) {
+      
+      // block land animation
+      if(hasLanded && !startClear) {   
+        strokeIn += strokeSpeed;
+        //float strokeMap = map(strokeIn, 0, 30, 0, 255);
+        if(strokeIn >= 30) {
+          strokeSpeed *= -1;
+        }
+        if(strokeIn < 0) {
+          strokeIn = 0;
+          hasLanded = false;
+        }
+      }
+      
+      // begin clearing block animation
+      if(startClear) {
+        clearFade += 1;
+        strokeIn += 1;
+        if(clearFade > 30) {
+          clearFade = 30;
+          strokeIn = 30;
+          stopClear = true;
+          startClear = false;
+          clearTime = millis();
+        }
+      }
+      
+      // clear delay trigger
+      if(stopClear && millis() > clearTime + 400) {
+        doneClear = true;
+      }
+            
+      // actual block
       fill(c);
       stroke(115, 138, 152);
       if(gameOver) {
         fill(red(c), green(c), blue(c), 75);
         stroke(115, 138, 152);
-      } 
+      }    
+      rect(xPos, yPos, blockSize, blockSize, 5);
       
-      rect(xPos, yPos, blockSize, blockSize, 10);
+      // white highlight block
+      fill(255, map(clearFade, 0, 30, 0, 255));
+      stroke(255, map(strokeIn, 0, 30, 0, 255));
+      strokeWeight(map(strokeIn, 0, 30, 1, 3));
+      rect(xPos, yPos, blockSize, blockSize, 5);
+      strokeWeight(1);   
     }
   }  
 
