@@ -13,7 +13,8 @@
  x add point system
  x set color pallete 
  x create irregular trominoes
- - game start and game over cues
+ x game start and game over cues
+ - reset game
  - add sounds and music
  
  **************************************************************/
@@ -36,6 +37,8 @@ boolean gameOver;            // toggle game over
 
 boolean clearAnimationActive; // track if row clearing animation is active
 boolean clearAnimationDone;   // trigger when row clearing animation is done
+
+int gameScreen;               // track the screen active intro, play, paus
 
 Tromino t;                   // the current tromino player is controlling
 
@@ -62,6 +65,7 @@ void setup() {
   nextPiece = int(random(0, 2));
   clearAnimationActive = false;
   clearAnimationDone = false;
+  gameScreen = 0;
 
   // create play area grid
   cells = new ArrayList<Cell>();
@@ -84,10 +88,67 @@ void setup() {
  **************************************************************/
 void draw() {
   background(245, 244, 240);
+  
+  switch(gameScreen) {
+   case 0: // intro
+   displayGameCore();
+   fill(115, 138, 152);
+   text("SPACE to start", 400, 400);
+   break;
+   case 1: // play
+   displayGameCore();
+   displayScoreElements();
+   gameMechanics();
+   break;
+   case 2: // pause
+   displayGameCore();
+   displayGameTrominoes();
+   fill(115, 138, 152);
+   text("Game Paused", 400, 400);
+   break;
+  }  
+}
 
-  // display game info (score, level, lines)
-  displayGameInfo();
+/**************************************************************
+ KEY PRESSED
+ 
+ - LEFT  : Move current tromino left
+ - RIGHT : Move current tromino right
+ - DOWN  : Move current tromino down
+ - UP    : Rotate current tromino clockwise
+ - SPACE : toggle game screens
+ **************************************************************/
+void keyPressed() {
+  if (key == CODED) {
+    if (keyCode == LEFT) {
+      t.moveLeft();
+    }
 
+    if (keyCode == RIGHT) {
+      t.moveRight();
+    }
+
+    if (keyCode == DOWN) {
+      t.moveDown();
+    }
+
+    if (keyCode == UP) {
+      t.rotateShape();
+    }
+  }
+  if(key == ' ') {
+    gameScreen ++;
+    if(gameScreen > 2) {
+      gameScreen = 1;
+    }
+  }
+}
+
+/**
+* the core gaming mechanics for trigger drops, score counters, 
+* and clearing elements
+*/
+void gameMechanics() {
   // drop current tromino at desired speed
   // while game is not over
   if (!gameOver && !clearAnimationActive) {
@@ -130,10 +191,17 @@ void draw() {
       clearAnimationDone = false;
     }
   }
+ 
+  // display next piece on the side
+  displayNextPiece();
+  displayGameTrominoes();  
+}
 
-
-
-  // display blocks active in grid area
+/**
+* Display the trominoes and blocks played
+*/
+void displayGameTrominoes() {
+   // display blocks active in grid area
   for (int i = 0; i < blocks.size(); i++) {
     blocks.get(i).display();
   }
@@ -142,62 +210,38 @@ void draw() {
   t.display();
 }
 
-/**************************************************************
- KEY PRESSED
- 
- - LEFT  : Move current tromino left
- - RIGHT : Move current tromino right
- - DOWN  : Move current tromino down
- - UP    : Rotate current tromino clockwise
- **************************************************************/
-void keyPressed() {
-  if (key == CODED) {
-    if (keyCode == LEFT) {
-      t.moveLeft();
-    }
-
-    if (keyCode == RIGHT) {
-      t.moveRight();
-    }
-
-    if (keyCode == DOWN) {
-      t.moveDown();
-    }
-
-    if (keyCode == UP) {
-      t.rotateShape();
-    }
-  }
-}
-
 /**
- * Display game information such as title, score, lines, levels
+ * Display core game elements: grid and title
  */
-void displayGameInfo() {
+void displayGameCore() {
   // game area rect
   fill(208, 210, 205, 100);
   stroke(115, 138, 152);
   rect(225, 100, 350, 650, 5);
 
-  // display next piece on the side
-  displayNextPiece();
-
   textAlign(CENTER, CENTER);
   textSize(48);
   fill(115, 138, 152);
   text("trominotris", width/2, 50);
+  
+  textSize(14);
+  text("by yahir", width/2, height - 25);
+    
+}
 
+void displayScoreElements() {
   textSize(26);
   fill(115, 138, 152);
   text(score, 688, 400);
 
   textSize(18);
   fill(169, 176, 182);
-  text(level, 688 - 25, 450);
-  text(totalLinesCleared, 688 + 25, 450);
+  //text(level, 688 - 25, 450);
+  //text(totalLinesCleared, 688 + 25, 450);
+  text(level, 688, 350);
+  text(totalLinesCleared, 688, 450);
 
-  textSize(14);
-  text("by yahir", width/2, height - 25);
+  
 }
 
 /**

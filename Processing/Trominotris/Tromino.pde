@@ -453,6 +453,9 @@ class Tromino {
     }
   }
   
+  /**
+  * start the land animation when tromino has settled
+  */ 
   void startLandAnimation() {
     for (int i = 0; i < tromino.size(); i++) { 
       tromino.get(i).hasLanded = true;

@@ -97,7 +97,7 @@ class Block {
       // actual block
       fill(c);
       stroke(115, 138, 152);
-      if(gameOver) {
+      if(gameOver || gameScreen == 2) {
         fill(red(c), green(c), blue(c), 75);
         stroke(115, 138, 152);
       }    
