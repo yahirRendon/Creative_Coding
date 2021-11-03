@@ -2,6 +2,8 @@
  Class for trominoes and methods for moving within game grid
  - I or Long piece
  - L piece
+ - Long irregular
+ - Pyramid
  
  **************************************************************/
 class Tromino {

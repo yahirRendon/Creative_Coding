@@ -4,20 +4,33 @@
  Date:     November 2021
  
  Notes:
- 1. Use arrow keys to move and rotate tromino
+ 1. SPACE KEY to start and pause game
+ 2. Use arrow keys to move and rotate tromino
+ 3. N KEY to start new game
  
- To Do:
- x create tromino land animation
- x create tromino row and trominotris clear animation
- x drop speed increment
- x add point system
- x set color pallete 
- x create irregular trominoes
- x game start and game over cues
- - reset game
- - add sounds and music
  
+Credits
+Music theme: Benjamin Tissot of Bensound
+  https://www.bensound.com/royalty-free-music/track/slow-motion
+Clear Row Sound: LittleRobotSoundFactory
+  https://freesound.org/people/LittleRobotSoundFactory/sounds/270524/
+Trominotris Sound: Leszek_Szary
+  https://freesound.org/people/Leszek_Szary/sounds/171671/
+Reset Sound: colorsCrimsonTears
+  https://freesound.org/people/colorsCrimsonTears/sounds/562292/
+Block Land Sound: Yahir mixed in Ableton Live
+
+Processing 3.5.4
  **************************************************************/
+ 
+import processing.sound.*;
+
+SoundFile soundTheme;        // the game theme song
+SoundFile soundLand;         // the tromino land sound
+SoundFile soundClear;        // basic row clear sound
+SoundFile soundTrominotris;  // trominotris clear sound
+SoundFile soundReset;        // restart game sound
+
 PFont font;                  // set font for project
 ArrayList<Cell> cells;       // the cells that make up the play area
 ArrayList<Block> blocks;     // list of all blocks in the play area
@@ -27,6 +40,7 @@ int gridHeight;              // the number of rows in play grid (0-2 are loading
 int timeMarker;              // track time for tromino drop
 int dropSpeed;               // speed at which trominos will drop
 int nextPiece;               // track the next tromino to be created
+int dropDecrement;           // amount deducted from dropSpeed at each level
 
 int score;                   // track user score
 int level;                   // track user level (increments every 5 lines)
@@ -34,14 +48,12 @@ int totalLinesCleared;       // track total lines cleared by user
 int linesCleared;            // track lines cleared per level
 int priorLinesCleared;       // track lines for level advance
 boolean gameOver;            // toggle game over
-
-boolean clearAnimationActive; // track if row clearing animation is active
-boolean clearAnimationDone;   // trigger when row clearing animation is done
+boolean clearAnimationActive;// track if row clearing animation is active
+boolean clearAnimationDone;  // trigger when row clearing animation is done
 
 int gameScreen;               // track the screen active intro, play, paus
 
 Tromino t;                   // the current tromino player is controlling
-
 
 /**************************************************************
  SET UP METHOD
@@ -56,8 +68,10 @@ void setup() {
   // initialize variables
   gridWidth = 7;
   gridHeight = 16;
-  dropSpeed = 700;
+  dropSpeed = 600;
+  dropDecrement = 50;
   score = 0;
+  level = 0;
   totalLinesCleared = 0;
   priorLinesCleared = 0;
   linesCleared = 0;
@@ -78,6 +92,18 @@ void setup() {
   // initialize block area
   blocks = new ArrayList<Block>(); 
   t = new Tromino();
+  
+  // Initialize Sound elements
+  soundReset = new SoundFile(this, "562292__colorscrimsontears__heal-rpg.mp3");
+  soundReset.amp(0.3);
+  soundLand = new SoundFile(this, "deep_kick.mp3");
+  soundClear = new SoundFile(this, "270524__littlerobotsoundfactory__jingle-achievement-00.mp3");
+  soundClear.amp(0.5);
+  soundTrominotris = new SoundFile(this, "171671__leszek-szary__success-1.mp3");
+  soundTrominotris.amp(0.25);
+  soundTheme = new SoundFile(this, "bensound-slowmotion_loop-modified.mp3");
+  soundTheme.amp(0.5);
+  soundTheme.loop(); 
 
   // set timer
   timeMarker = millis();
@@ -117,6 +143,7 @@ void draw() {
  - DOWN  : Move current tromino down
  - UP    : Rotate current tromino clockwise
  - SPACE : toggle game screens
+ - N KEY : restart game
  **************************************************************/
 void keyPressed() {
   if (key == CODED) {
@@ -142,7 +169,11 @@ void keyPressed() {
       gameScreen = 1;
     }
   }
+  if(key == 'n' || key == 'N') {
+    resetGame();
+  }
 }
+
 
 /**
 * the core gaming mechanics for trigger drops, score counters, 
@@ -152,11 +183,20 @@ void gameMechanics() {
   // drop current tromino at desired speed
   // while game is not over
   if (!gameOver && !clearAnimationActive) {
+    if(level > 7) {
+      dropDecrement = 25;
+    } 
+    
     if (millis() > timeMarker + dropSpeed) {
       // continue moving block down if possible
       if (t.canMoveDown()) {
         t.moveDown();
       } else {
+        if(soundLand.isPlaying()) {
+          soundLand.stop();
+        }
+        soundLand.stop();
+        soundLand.play();
         // block cannot move down 
         // push tromino to block list and create new
         t.startLandAnimation();
@@ -164,8 +204,13 @@ void gameMechanics() {
         // check if rows can be cleared and create a tromino
         checkRows();      
         t.createNewTromino(nextPiece);
-        if (level > 0 && level % 2 == 0) {
-          nextPiece = int(random(0, 4));
+        if (level > 0 && level % 2 == 1) {
+          int rand = int(random(0, 3));
+          if(rand == 2) {
+            nextPiece = int(random(0, 4));
+          } else {
+            nextPiece = int(random(0, 2));
+          }
         } else {
           nextPiece = int(random(0, 2));
         }
@@ -195,53 +240,6 @@ void gameMechanics() {
   // display next piece on the side
   displayNextPiece();
   displayGameTrominoes();  
-}
-
-/**
-* Display the trominoes and blocks played
-*/
-void displayGameTrominoes() {
-   // display blocks active in grid area
-  for (int i = 0; i < blocks.size(); i++) {
-    blocks.get(i).display();
-  }
-
-  // display current tromino controlled by player
-  t.display();
-}
-
-/**
- * Display core game elements: grid and title
- */
-void displayGameCore() {
-  // game area rect
-  fill(208, 210, 205, 100);
-  stroke(115, 138, 152);
-  rect(225, 100, 350, 650, 5);
-
-  textAlign(CENTER, CENTER);
-  textSize(48);
-  fill(115, 138, 152);
-  text("trominotris", width/2, 50);
-  
-  textSize(14);
-  text("by yahir", width/2, height - 25);
-    
-}
-
-void displayScoreElements() {
-  textSize(26);
-  fill(115, 138, 152);
-  text(score, 688, 400);
-
-  textSize(18);
-  fill(169, 176, 182);
-  //text(level, 688 - 25, 450);
-  //text(totalLinesCleared, 688 + 25, 450);
-  text(level, 688, 350);
-  text(totalLinesCleared, 688, 450);
-
-  
 }
 
 /**
@@ -325,17 +323,40 @@ void checkRows() {
   if (linesCleared >= priorLinesCleared + 5) {
     level++;    
     linesCleared = priorLinesCleared;
-    dropSpeed -= 50;
+    dropSpeed -= dropDecrement;
+    if(dropSpeed < 150) {
+      dropSpeed = 150;
+    }
   }
 
   // increment score with bonuse depending on level
   float levelBonus = map(level, 0, 10, 1, 5.0);
   if (templinesCleared == 3) {
     score += int(100 * levelBonus);
+    if(soundTrominotris.isPlaying()) {
+      soundTrominotris.stop();
+    }
+    soundTrominotris.stop();
+    soundTrominotris.play();
+    if(soundClear.isPlaying()) {
+      soundClear.stop();
+    }
+    soundClear.stop();
+    soundClear.play();
   } else if (templinesCleared == 2) {
     score += int(50 * levelBonus);
+    if(soundClear.isPlaying()) {
+      soundClear.stop();
+    }
+    soundClear.stop();
+    soundClear.play();
   } else if (templinesCleared == 1) {
     score += int(25 * levelBonus);
+    if(soundClear.isPlaying()) {
+      soundClear.stop();
+    }
+    soundClear.stop();
+    soundClear.play();
   }
 }
 
@@ -382,4 +403,94 @@ void clearFullRows() {
       }
     }
   }
+}
+
+/**
+* Display the trominoes and blocks played
+*/
+void displayGameTrominoes() {
+   // display blocks active in grid area
+  for (int i = 0; i < blocks.size(); i++) {
+    blocks.get(i).display();
+  }
+
+  // display current tromino controlled by player
+  t.display();
+}
+
+/**
+ * Display core game elements: grid and title
+ */
+void displayGameCore() {
+  // game area rect
+  fill(208, 210, 205, 100);
+  stroke(115, 138, 152);
+  rect(225, 100, 350, 650, 5);
+
+  textAlign(CENTER, CENTER);
+  textSize(48);
+  fill(115, 138, 152);
+  text("trominotris", width/2, 50);
+  
+  textSize(14);
+  text("by yahir", width/2, height - 25);
+    
+}
+
+/**
+* Display the score, lines cleared, and level
+*/
+void displayScoreElements() {
+  textSize(26);
+  fill(115, 138, 152);
+  text(score, 688, 400);
+
+  textSize(18);
+  fill(169, 176, 182);
+  text(level, 688, 350);
+  text(totalLinesCleared, 688, 450);
+}
+
+/**
+* reset the game board and pieces
+*/
+void resetGame() {
+  // rest variables
+  dropSpeed = 700;
+  dropDecrement = 50;
+  score = 0;
+  level = 0;
+  totalLinesCleared = 0;
+  priorLinesCleared = 0;
+  linesCleared = 0;
+  gameOver = false;
+  nextPiece = int(random(0, 2));
+  clearAnimationActive = false;
+  clearAnimationDone = false;
+  gameScreen = 1;
+
+  // create play area grid
+  cells = new ArrayList<Cell>();
+  for (int y = 0; y < gridHeight; y++) {
+    for (int x = 0; x < gridWidth; x++) {
+      cells.add(new Cell(x, y, 0));
+    }
+  }
+
+  // initialize block area
+  blocks = new ArrayList<Block>(); 
+  t = new Tromino();
+  
+  if(soundReset.isPlaying()) {
+    soundReset.stop();
+  }
+  soundReset.stop();
+  soundReset.play();
+  if(soundClear.isPlaying()) {
+    soundClear.stop();
+  }
+  soundClear.stop();
+  soundClear.play();
+  
+  timeMarker = millis();
 }
