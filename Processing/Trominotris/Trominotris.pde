@@ -203,18 +203,17 @@ void gameMechanics() {
         t.pushBlocks(blocks);
         // check if rows can be cleared and create a tromino
         checkRows();      
-        t.createNewTromino(nextPiece);
-        if (level > 0 && level % 2 == 1) {
-          int rand = int(random(0, 3));
-          if(rand == 2) {
+        t.createNewTromino(nextPiece);        
+        if(level > 0) {
+          int rand = int(random(0, 2));
+          if(rand == 0) {
             nextPiece = int(random(0, 4));
           } else {
             nextPiece = int(random(0, 2));
           }
-        } else {
-          nextPiece = int(random(0, 2));
         }
       }
+      
 
       // reset timer
       timeMarker = millis();
@@ -264,9 +263,9 @@ void displayNextPiece() {
     break;
   case 3:
     fill(232, 139, 106);
-    rect(37, 400, 50, 50, 5);
-    rect(87, 450, 50, 50, 5);
-    rect(137, 400, 50, 50, 5);
+    rect(37, 425, 50, 50, 5);
+    rect(87, 375, 50, 50, 5);
+    rect(137, 425, 50, 50, 5);
     break;
   default:
     fill(246, 210, 174);
