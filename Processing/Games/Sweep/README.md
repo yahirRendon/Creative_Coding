@@ -11,7 +11,7 @@
 <br>- Left click on red button to reset grid
 <br>- by default there are 6 mines within the 6 x 6 grid</p>
 <p align="center">
-  <img width="700" align="center" src="https://github.com/yahirRendon/Creative_Coding/blob/main/Processing/Sweep/data/sweep_g.gif" alt="demo"/>
+  <img width="700" align="center" src="https://github.com/yahirRendon/Creative_Coding/blob/main/Processing/Games/Sweep/data/sweep_git.gif" alt="demo"/>
 </p>
 
 
