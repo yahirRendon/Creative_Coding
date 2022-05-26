@@ -11,7 +11,7 @@
 <br>- Press SPACE again to pause evolution
 <br>- Press 'c' or 'C' to clear the board</p>
 <p align="center">
-  <img width="700" align="center" src="https://github.com/yahirRendon/Creative_Coding/blob/main/Processing/Games/Game_of_Life_Image/data/Game_of_Life_Image_git.gif" alt="demo"/>
+  <img width="700" align="center" alt="game of life game" src="https://github.com/yahirRendon/creative_coding/blob/main/processing/game_projects/game_of_life_image/data/Game_of_Life_Image_git.gif"/>
   <br>Photo by <a href="https://www.pexels.com/photo/women-hugging-each-other-4557876/?utm_content=attributionCopyText&utm_medium=referral&utm_source=pexels">Anna Shvets</a> from <a href="https://www.pexels.com/">Pexels</a> 
 </p>
 
