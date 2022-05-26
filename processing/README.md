@@ -7,12 +7,22 @@ A gathering of various creative coding projects using Processing. Some are purel
 <h3 align="center"><a href="https://github.com/yahirRendon/Creative_Coding/tree/main/Processing/Games">Game Projects<a/></h3>
   
 <p align="center">
-  <img alt="Trominotris" width="300" align="center" alt="trominotris game" src="https://github.com/yahirRendon/creative_coding/blob/main/processing/game_projects/trominotris/data/trominotris_git.gif"/>
-  <img alt="Sweep Game" width="300" align="center" alt="sweep game" src="https://github.com/yahirRendon/creative_coding/blob/main/processing/game_projects/sweep/data/sweep_git.gif"/>
-  <img alt="Game of Life"width="300" align="center" alt="game of life" src="https://github.com/yahirRendon/creative_coding/blob/main/processing/game_projects/game_of_life_image/data/Game_of_Life_Image_git.gif"/>
+  <img alt="trominotris game"  width="300" align="center" src="https://github.com/yahirRendon/creative_coding/blob/main/processing/game_projects/trominotris/data/trominotris_git.gif"/>
+  <img alt="sweep game"  width="300" align="center" src="https://github.com/yahirRendon/creative_coding/blob/main/processing/game_projects/sweep/data/sweep_git.gif"/>
+  <img alt="Game of Life"width="300" align="center" src="https://github.com/yahirRendon/creative_coding/blob/main/processing/game_projects/game_of_life_image/data/Game_of_Life_Image_git.gif"/>
+</p>
+ 
+<h3 align="center"><a href="https://github.com/yahirRendon/creative_coding/tree/main/processing/audio_projects">Audio Projects<a/></h3>
+
+<p align="center">
+  <img alt="static ring visualizer" width="300" align="center" src="https://github.com/yahirRendon/creative_coding/blob/main/processing/audio_projects/Visualizer_Rings_Solo_Static_Public/data/Viz_Ring_Static_Gif.gif"/>
+  <img alt="revolving ring visualizer" width="300" align="center" src="https://github.com/yahirRendon/creative_coding/blob/main/processing/audio_projects/Visualizer_Rings_Solo_Revolve_Public/data/Viz_Ring_Revolve_Gif.gif"/>
+  <img alt="Game of Life"width="300" align="center" src="https://github.com/yahirRendon/creative_coding/blob/main/processing/game_projects/game_of_life_image/data/Game_of_Life_Image_git.gif"/>
 </p>
   
-<h3 align="center">Creative Projects<a/></h3>
+<h3 align="center"><a href="https://github.com/yahirRendon/creative_coding/tree/main/processing/artistic_projects">Artistic Projects<a/></h3>
+  
+
 
 
 
