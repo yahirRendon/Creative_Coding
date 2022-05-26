@@ -12,7 +12,7 @@
   Using multiple Ring objects set at different frequencies creates the output below:
 </p>
 <p align="center">
-  <img width="700" align="center" src="https://github.com/yahirRendon/Creative_Coding/blob/main/Processing/Visualizer_Rings_Solo_Revolve_Public/Viz_Ring_Revolve_Gif.gif" alt="demo"/>
+  <img width="700" align="center" alt="revolve visual ring" src="https://github.com/yahirRendon/creative_coding/blob/main/processing/audio_projects/Visualizer_Rings_Solo_Revolve_Public/data/Viz_Ring_Revolve_Gif.gif"/>
 </p>
 
 
