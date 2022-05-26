@@ -17,7 +17,7 @@
 <br>- SPACE key to toggle game screens
 <br>- N key to restart the game</p>
 <p align="center">
-  <img width="700" align="center" src="https://github.com/yahirRendon/Creative_Coding/blob/main/Processing/Games/Trominotris/data/trominotris_git.gif" alt="demo"/>
+  <img width="700" align="center" src="https://github.com/yahirRendon/creative_coding/blob/main/processing/game_projects/trominotris/data/trominotris_git.gif" alt="demo"/>
 </p>
 
 
