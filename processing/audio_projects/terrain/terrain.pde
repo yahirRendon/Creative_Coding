@@ -392,7 +392,7 @@ void resizeSettings() {
     new ButtonDial("edge", "hue of main terrain", false, EDGE_HUE[1], EDGE_HUE[2], EDGE_HUE[0])};
     // x, y, name, buttons
   dialStyle = new Dial(int(width *.2), int(height * 0.5), "", styleButtons);
-  dialStyle.numRound = 0;
+  dialStyle.numRound = -1;
   
   ButtonDial[] inputbuttons = new ButtonDial[]{
     new ButtonDial("feel", "sensativity level", true, FEEL_STD[1], FEEL_STD[2], FEEL_STD[0]),
