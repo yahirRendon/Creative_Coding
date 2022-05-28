@@ -4,7 +4,7 @@
   An endlessly mesmerizing terrain generating experience. After watching some game design videos on procedural terrain generation I came up with the idea of creating a grid that would appear to flow natural over hills and valleys. The result was a very calming output with some fun and unique features
 </p>
 
-<h3>Demo</h3>
+<h3 align="center">Demo</h3>
 
 <p align="center">
   <img alt="default terrain"  width="800" align="center" src="https://github.com/yahirRendon/creative_coding/blob/main/processing/audio_projects/terrain/data/terrain_anim.gif"/>
