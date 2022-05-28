@@ -22,8 +22,7 @@ class ButtonDial {
   color cNameTrue;       // name color when true
   color cNameFalse;      // name color when false
   color cNameActive;     // name color when active
-  
-  
+    
   /*
    * constructor method for creating a button
    *
