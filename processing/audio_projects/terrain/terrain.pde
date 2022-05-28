@@ -23,7 +23,7 @@
                - RIGHT MOUSE | attract edge terrain nodes
            5. play with other settings
            6. enjoy!
-           
+                     
  **************************************************************/
 
 import processing.sound.*;
@@ -83,10 +83,15 @@ float feelAmtMon;           // sensativity of mice in monitor mode
 /**************************************************************
  SET UP FUNCTION
  **************************************************************/
-void setup() {
+ 
+void settings() {
   size(1200, 800, P2D);
   //fullScreen(P2D, 2);
-  
+  //surface.setTitle("terrain by yahir");
+  PJOGL.setIcon("icon.png");
+  //surface.setIcon(icon);
+}
+void setup() {
   window_w = width;
   window_h = height;
   colorMode(HSB, 360, 100, 100, 100); 
@@ -145,8 +150,7 @@ void pre() {
     window_h = height;
     resizeEdges();
     resizeMain();
-    resizeSettings();
-    
+    resizeSettings();   
   }
 }
 
@@ -199,37 +203,40 @@ void mouseClicked() {
    
    buttonReset.updateState();
    if(buttonReset.state) {
-     buttonMonitor.state = false;
-     dialStyle.valueIndex = 0;
-     dialStyle.buttons[0].min = SCULPT_SIZE[1];
-     dialStyle.buttons[0].max = SCULPT_SIZE[2];
-     dialStyle.buttons[0].value = SCULPT_SIZE[0];
-     dialStyle.buttons[1].min = MAIN_HUE[1];
-     dialStyle.buttons[1].max = MAIN_HUE[2];
-     dialStyle.buttons[1].value = MAIN_HUE[0];
-     dialStyle.buttons[2].min = EDGE_HUE[1];
-     dialStyle.buttons[2].max = EDGE_HUE[2];
-     dialStyle.buttons[2].value = EDGE_HUE[0];
+     //buttonMonitor.state = false;
+     //dialStyle.valueIndex = 0;
+     //dialStyle.buttons[0].min = SCULPT_SIZE[1];
+     //dialStyle.buttons[0].max = SCULPT_SIZE[2];
+     //dialStyle.buttons[0].value = SCULPT_SIZE[0];
+     //dialStyle.buttons[1].min = MAIN_HUE[1];
+     //dialStyle.buttons[1].max = MAIN_HUE[2];
+     //dialStyle.buttons[1].value = MAIN_HUE[0];
+     //dialStyle.buttons[2].min = EDGE_HUE[1];
+     //dialStyle.buttons[2].max = EDGE_HUE[2];
+     //dialStyle.buttons[2].value = EDGE_HUE[0];
      
-     //#fix feel
-     dialInput.buttons[0].state = true;
-     dialInput.valueIndex = 0;
-     dialInput.buttons[0].min = FEEL_STD[1];
-     dialInput.buttons[0].max = FEEL_STD[2];
-     dialInput.buttons[0].value = FEEL_STD[0];
-     feelAmtMon = FEEL_MON[0];
+     ////#fix feel
+     //dialInput.buttons[0].state = true;
+     //dialInput.valueIndex = 0;
+     //dialInput.buttons[0].min = FEEL_STD[1];
+     //dialInput.buttons[0].max = FEEL_STD[2];
+     //dialInput.buttons[0].value = FEEL_STD[0];
+     //feelAmtMon = FEEL_MON[0];
      
      
-     dialInput.buttons[1].min = PEAK_AMT[1];
-     dialInput.buttons[1].max = PEAK_AMT[2];
-     dialInput.buttons[1].value = PEAK_AMT[0];
-     dialInput.buttons[2].min = FLOW_AMT[1];
-     dialInput.buttons[2].max = FLOW_AMT[2];
-     dialInput.buttons[2].value = FLOW_AMT[0];
+     //dialInput.buttons[1].min = PEAK_AMT[1];
+     //dialInput.buttons[1].max = PEAK_AMT[2];
+     //dialInput.buttons[1].value = PEAK_AMT[0];
+     //dialInput.buttons[2].min = FLOW_AMT[1];
+     //dialInput.buttons[2].max = FLOW_AMT[2];
+     //dialInput.buttons[2].value = FLOW_AMT[0];
      
      //resetEdgeTerrain();
      resizeEdges();
+     
      buttonReset.updateState();
+     
+     resizeSettings();
    }
    
    // update the dial values and buttons
@@ -511,7 +518,7 @@ void updateTerrain3D() {
 }
 
 /*
- * function for display faux 3D terrain 
+ * function for displaying main 3D terrain 
  */
 void displayTerrain3D() {
 
@@ -545,7 +552,7 @@ void displayTerrain3D() {
   noStroke();
   fill(0, 1);
   for(int i = 0; i < 10; i++) {
-    float r = (i * 10);
+    float r = (i * 20);
     float off_lux = map(luy, mainOffset_y - 200, mainOffset_y + 200, r, r);
     float off_rux = map(ruy, mainOffset_y - 200, mainOffset_y + 200, -r, r);
     float off_rdx = map(rdy, mainOffset_y - 200, mainOffset_y + 200, -r, r);
@@ -587,12 +594,11 @@ void updateEdgeTerrain() {
 
         // check if the left terrain/mouse distance is within limits for repelling nodes
         if (dL < dialStyle.getValue(0) && dL > 5) {
-          float radians = atan2(mouseY-terrainLeft[x][y].y, mouseX-terrainLeft[x][y].x)+PI;          
-          float d2 = abs(dist(mouseX, mouseY, terrainLeft[x][y].x, terrainLeft[x][y].y));
+          float angle = atan2(mouseY-terrainLeft[x][y].y, mouseX-terrainLeft[x][y].x)+PI;          
           //update x, y, and z values of terrain
-          terrainLeft[x][y].x = terrainLeft[x][y].x + map(d2, dialStyle.getValue(0), 0, 0, 1) * cos(radians);
-          terrainLeft[x][y].y = terrainLeft[x][y].y + map(d2, dialStyle.getValue(0), 0, 0, 1) * sin(radians);
-          terrainLeft[x][y].z = terrainLeft[x][y].z + 1;
+          terrainLeft[x][y].x += map(dL, dialStyle.getValue(0), 0, 0, 1) * cos(angle);
+          terrainLeft[x][y].y += map(dL, dialStyle.getValue(0), 0, 0, 1) * sin(angle);
+          terrainLeft[x][y].z ++ ;
           if (terrainLeft[x][y].z > 100) {
             terrainLeft[x][y].z = 100;
           }
@@ -600,11 +606,10 @@ void updateEdgeTerrain() {
 
         // check if the right terrain/mouse distance is within limits for repelling nodes
         if (dR < dialStyle.getValue(0) && dR > 5) {
-          float radians = atan2(mouseY-terrainRight[x][y].y, mouseX-terrainRight[x][y].x)+PI;          
-          float d2 = abs(dist(mouseX, mouseY, terrainRight[x][y].x, terrainRight[x][y].y));
-          terrainRight[x][y].x = terrainRight[x][y].x + map(d2, dialStyle.getValue(0), 0, 0, 1) * cos(radians);
-          terrainRight[x][y].y = terrainRight[x][y].y + map(d2, dialStyle.getValue(0), 0, 0, 1) * sin(radians);
-          terrainRight[x][y].z = terrainRight[x][y].z + 1;
+          float angle = atan2(mouseY-terrainRight[x][y].y, mouseX-terrainRight[x][y].x)+PI;          
+          terrainRight[x][y].x += map(dR, dialStyle.getValue(0), 0, 0, 1) * cos(angle);
+          terrainRight[x][y].y += map(dR, dialStyle.getValue(0), 0, 0, 1) * sin(angle);
+          terrainRight[x][y].z ++;
           if (terrainRight[x][y].z > 100) {
             terrainRight[x][y].z = 100;
           }
@@ -623,11 +628,10 @@ void updateEdgeTerrain() {
 
         // check if the left terrain/mouse distance is within limits for shrinking nodes
         if (dL < dialStyle.getValue(0) && dL > 5) {
-          float radians = atan2(mouseY-terrainLeft[x][y].y, mouseX-terrainLeft[x][y].x)+PI;         
-          float d2 = abs(dist(mouseX, mouseY, terrainLeft[x][y].x, terrainLeft[x][y].y));
-          terrainLeft[x][y].x = terrainLeft[x][y].x - map(d2, 0, dialStyle.getValue(0), 0, .5) * cos(radians);
-          terrainLeft[x][y].y = terrainLeft[x][y].y - map(d2, 0, dialStyle.getValue(0), 0, .5) * sin(radians);
-          terrainLeft[x][y].z = terrainLeft[x][y].z - 1;
+          float angle = atan2(mouseY-terrainLeft[x][y].y, mouseX-terrainLeft[x][y].x)+PI;         
+          terrainLeft[x][y].x -= map(dL, 0, dialStyle.getValue(0), 0, .5) * cos(angle);
+          terrainLeft[x][y].y -= map(dL, 0, dialStyle.getValue(0), 0, .5) * sin(angle);
+          terrainLeft[x][y].z --;
           if (terrainLeft[x][y].z < 0) {
             terrainLeft[x][y].z = 0;
           }
@@ -635,11 +639,10 @@ void updateEdgeTerrain() {
 
         // check if the left terrain/mouse distance is within limits for shrinking nodes
         if (dR < dialStyle.getValue(0) && dR > 5) {
-          float radians = atan2(mouseY-terrainRight[x][y].y, mouseX-terrainRight[x][y].x)+PI;         
-          float d2 = abs(dist(mouseX, mouseY, terrainRight[x][y].x, terrainRight[x][y].y));
-          terrainRight[x][y].x = terrainRight[x][y].x - map(d2, 0, dialStyle.getValue(0), 0, .5) * cos(radians);
-          terrainRight[x][y].y = terrainRight[x][y].y - map(d2, 0, dialStyle.getValue(0), 0, .5) * sin(radians);
-          terrainRight[x][y].z = terrainRight[x][y].z - 1;
+          float angle = atan2(mouseY-terrainRight[x][y].y, mouseX-terrainRight[x][y].x)+PI;         
+          terrainRight[x][y].x -= map(dR, 0, dialStyle.getValue(0), 0, .5) * cos(angle);
+          terrainRight[x][y].y -= map(dR, 0, dialStyle.getValue(0), 0, .5) * sin(angle);
+          terrainRight[x][y].z --;
           if (terrainRight[x][y].z < 0) {
             terrainRight[x][y].z = 0;
           }
