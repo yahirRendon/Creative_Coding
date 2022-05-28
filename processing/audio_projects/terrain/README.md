@@ -8,7 +8,12 @@
   <img alt="default terrain"  width="800" align="center" src="https://github.com/yahirRendon/creative_coding/blob/main/processing/audio_projects/terrain/data/terrain_anim.gif"/>
 </p>
 
-<h3 align="center"><a href="https://github.com/yahirRendon/Creative_Coding/tree/main/Processing/Games">Game Projects<a/></h3>
+<h3 align="center">Challenges</h3>
+<p>
+  coming soon...
+</p>
+
+<h3 align="center">Overview</h3>
   
 <p align="center">
   <img alt="default terrain"  width="500" align="center" src="https://github.com/yahirRendon/creative_coding/blob/main/processing/audio_projects/terrain/data/terrain_anim_01.gif"/>
