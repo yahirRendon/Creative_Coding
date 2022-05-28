@@ -169,13 +169,12 @@ class Dial {
     // round and display value
     textSize(valueSize);
     //float displayValue = (float)(Math.round(dialValue * Math.pow(10, 3)) / Math.pow(10, 3)); 
-    String displayValue = nf(dialValue, 0, numRound);
+    String displayValue = nf(dialValue, 1, numRound);
     fill(cValue);
     if(active()) {
       fill(cActive);
     }
     text(displayValue, x, y);
-    
     
     // display buttons and description when active
     for(int i = 0; i < buttons.length; i++) {
