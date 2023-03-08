@@ -12,7 +12,8 @@
  - Processing 3.5.4
  
  Instructions:
- 1. click and drag to push/repel pixels 
+ - click and drag left mouse button to repel pixels 
+ - click and drag right mouse button to attract pixels 
  
  
  **************************************************************/
@@ -20,6 +21,7 @@ PImage img;              // source image for placing pxl objects
 ArrayList<Pxl> pxls;     // list of pxl objects
 int range;               // push distance from cursor
 boolean leftPressed;     // track left mouse button pressed
+boolean rightPressed;    // track right mouse button pressed
 
 /**************************************************************
  SET UP FUNCTION
@@ -27,22 +29,24 @@ boolean leftPressed;     // track left mouse button pressed
 void setup() {
   size(600, 600, P2D);
   colorMode(HSB, 360, 100, 100, 100);
-  img = loadImage("");
+  img = loadImage(""); // png will be needed in data folder
   pxls = new ArrayList<Pxl>();
-  range = 200;
+  range = 120;
   leftPressed = false;
+  rightPressed = false;
  
   // loop through image and get desired pixels
   // based on brightness 
   for(int y = 0; y < height; y++) {
     for(int x = 0; x < width; x++) {
       int index = x + y * width;
-      float bright = brightness(img.pixels[index]);
+      float alpha = alpha(img.pixels[index]);
      
-      if(bright < 80) {
+      if(alpha > 0) {
         color tColor = color(hue(img.pixels[index]),
                              saturation(img.pixels[index]),
-                             brightness(img.pixels[index]));
+                             brightness(img.pixels[index]),
+                             alpha(img.pixels[index]));
         pxls.add(new Pxl(x, y, tColor));
       }
     }
@@ -58,7 +62,7 @@ void draw() {
   noStroke();
   for(int i = 0; i < pxls.size(); i++) {
     float d = dist(mouseX, mouseY, pxls.get(i).pos.x, pxls.get(i).pos.y);
-    if(d < range) {
+    if(d < range + random(-30, 30)) {
       float angle = atan2(mouseY - pxls.get(i).pos.y, mouseX - pxls.get(i).pos.x);
      
       // repel nodes in range when left mouse button pressed
@@ -68,6 +72,13 @@ void draw() {
         pxls.get(i).pos.y -= map(d, range, 0, 0, spd) * sin(angle);
         pxls.get(i).resetOnMove();
       }  
+      // attract nodes
+      if(rightPressed) {
+        float spd = pxls.get(i).moveSpd;
+        pxls.get(i).pos.x += map(d, range, 0, 0, spd) * cos(angle);
+        pxls.get(i).pos.y += map(d, range, 0, 0, spd) * sin(angle);
+        pxls.get(i).resetOnMove();
+      }
     }
     pxls.get(i).display();
   } 
@@ -77,10 +88,14 @@ void draw() {
  MOUSEPRESSED FUNCTION
  
  LEFT  | left mouse button pressed
+ RIGHT | right mouse button pressed
  **************************************************************/
 void mousePressed() {
   if (mouseButton == LEFT) {
     leftPressed = true;
+  }
+  if (mouseButton == RIGHT) {
+    rightPressed = true;
   }
 }
 
@@ -88,10 +103,14 @@ void mousePressed() {
  MOUSEPRESSED FUNCTION
  
  LEFT  | left mouse button released
+ RIGHT | right mouse button released
  **************************************************************/
 void mouseReleased() {
   if (mouseButton == LEFT) {
     leftPressed = false;
+  }
+  if (mouseButton == RIGHT) {
+    rightPressed = false;
   }
 }
 
@@ -123,8 +142,8 @@ class Pxl {
     minSize = 2;
     stage = 0;
     delayCounter = 0;
-    delayAmt = int(random(50, 100));
-    moveSpd = random(10, 15);
+    delayAmt = int(random(200, 300));
+    moveSpd = random(1, 5);
   }
   
   /*
@@ -156,11 +175,11 @@ class Pxl {
      // can begin moving back to home position with easing
      float targetX = origin.x;
       float dx = targetX - pos.x;
-      pos.x += dx * 0.075;
+      pos.x += dx * 0.05;
      
       float targetY = origin.y;
       float dy = targetY - pos.y;
-      pos.y += dy * 0.075;
+      pos.y += dy * 0.05;
       d = dist(pos.x, pos.y, origin.x, origin.y);
       if(d < 1) {
         pos.x = origin.x;
@@ -175,15 +194,17 @@ class Pxl {
     
     // display
     if(d > 1) {
-      float satAdj = (map(d, minSize, 200, 0, 100));
+      float satAdj = (map(d, minSize, 200, 0, 50));
       float sat = saturation(pxlColor) + satAdj;
       if(sat > 90) sat = 90;
       
-      fill(hue(pxlColor), sat, brightness(pxlColor));
+      fill(hue(pxlColor), sat, brightness(pxlColor), alpha(pxlColor));
     } else {
       fill(pxlColor);
     }
-    float s = map(d, minSize, 200, minSize, 10);
-    ellipse(pos.x, pos.y, s, s);
+    float s = map(d, minSize, 200, minSize, 4);
+
+    //ellipse(pos.x, pos.y, s, s);
+    rect(pos.x, pos.y, s, s);
   } 
 }
