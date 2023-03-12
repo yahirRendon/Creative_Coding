@@ -1,0 +1,305 @@
+/******************************************************************************
+ *
+ * class for creating a text field for single line input
+ * this class a bit of a work in progress but works for what is needed
+ *
+ *****************************************************************************/
+class TextFieldBasic {
+  // Basic
+  String textStr;          // The actual String the user is modifying
+  int x, y;                // The x, y location of the text
+  int w, h;                // The widht and height of the text box
+  int activeX, activeY;    // x and y position (center) edit icon
+  int activeSize;          // the size of the edit icont
+
+  // Text beautification
+  int clearance;           // Clearance for designing the text box
+  int txtSize;             // The text size
+
+  // Under the hood
+  boolean inFocus;         // toggle whether the text box is inFocus (editable) or not
+  int cursorPos;           // Move through the string character positions to determine curosor position
+  float cursorX;           // The running cursor x position based on width of the string behind the cursor position
+  boolean okToUpdate;      // after perform key strokes update text string if cleared
+
+  /******************************************************************************
+   * constructor
+   * 
+   * @param  _x      the x position of text
+   * @param  _y      the y position of text
+   * @param  _ax     the x position of the edit icon
+   * @param  _ay     the y position of the edit icon
+   * @param  _txt    the starting text
+   *****************************************************************************/
+  TextFieldBasic(int _x, int _y, int _ax, int _ay, String _txt) {
+    x = _x;
+    y = _y;
+    w = 200;
+    h = 26;
+    cursorPos = 0;
+    textStr = _txt;
+    cursorX = 0;
+    activeX = _ax;
+    activeY = _ay;
+    activeSize = 25;
+    clearance = 5;
+    txtSize = 12;
+  }
+
+  /******************************************************************************
+   * 
+   * check and handle left and right arrow key input
+   * 
+   *****************************************************************************/
+  void checkLeftRight() {
+    // control cursor
+    if (textStr.length() > 0) {                 // check string length is greater than zero before updating curserPosition
+      if (key == CODED) {
+        if (keyCode == LEFT) {
+          cursorPos++;
+          if (cursorPos > textStr.length()) {  // Do not allow cursor beyond string length
+            cursorPos = textStr.length();
+          }
+        }
+        if (keyCode == RIGHT) {
+          cursorPos--;
+          if (cursorPos < 0) {                  // Don not allow cursor below string length
+            cursorPos = 0;
+          }
+        }
+        okToUpdate = false;
+      }
+    }
+  }
+
+  /******************************************************************************
+   * 
+   * check and handle the backspace key
+   * 
+   *****************************************************************************/
+  void checkBackSpace() {
+    // Key input functionality
+    if (keyCode == BACKSPACE) {
+      if (textStr.length() > 0) {  
+        // When cursor is at the end of the string  
+        if (cursorPos == 0) { 
+          textStr = textStr.substring(0, textStr.length()-1);
+        } 
+        // When cursor is somewhere in the string with outofbounds limit    
+        else if (cursorPos < textStr.length()) {        
+          String a = textStr.substring(0, textStr.length() - cursorPos - 1);
+          String b = textStr.substring(textStr.length() - cursorPos, textStr.length());
+          textStr = a + b;
+        }
+      }
+      okToUpdate = false;
+    }
+  }
+
+  /******************************************************************************
+   * 
+   * check and handle the delete key
+   * 
+   *****************************************************************************/
+  void checkDelete() {
+    if (keyCode == DELETE) {
+      textStr = "";
+      cursorPos = 0;
+      okToUpdate = false;
+    }
+  }
+
+  /******************************************************************************
+   * 
+   * check and handle the enter key
+   * 
+   *****************************************************************************/
+  void checkEnter() {
+    if (keyCode == ENTER) {
+      okToUpdate = false;
+    }
+  }
+
+  /******************************************************************************
+   * 
+   * update the text if appropriate
+   * 
+   *****************************************************************************/
+  void update() {
+
+    // Before any updates confirm text field is in focus
+    if (inFocus) {
+      okToUpdate = true;
+
+      checkLeftRight();
+      checkBackSpace();
+      checkDelete();
+      checkEnter();
+
+      // add key to text if ok to update
+      if (okToUpdate) {
+        if (cursorPos == 0) {    // If cursor at the end of string add key to end of string
+          textStr = textStr + key;
+        } else {        // Insert key at appropriate cursor position
+          String a = textStr.substring(0, textStr.length() - cursorPos);
+          String b = textStr.substring(textStr.length() - cursorPos, textStr.length());
+          textStr = a + key + b;
+        }
+      }
+      // Calculate appropriate text width based on hide or show text
+      //cursorX = textWidth(textStr.substring(0, textStr.length() - cursorPos));
+    }
+
+    updateFocus();
+  } 
+
+  /******************************************************************************
+   * 
+   * update the focus state
+   * 
+   *****************************************************************************/
+  void updateFocus() {
+    active(); // run active check
+
+    // Check if selected
+    if (selected()) {
+
+      inFocus = true;    // Set to inFocus
+      cursorPos = 0;     // Set cursor position to the end of text. #Fix Change to find exact cursor position
+      //cursorX = textWidth(textStr.substring(0, textStr.length() - cursorPos)); // Recalcuate the cursor x position
+    }
+
+    // check if deselected
+    if (deSelect()) {
+      inFocus = false;
+    }
+  }
+
+  /******************************************************************************
+   * 
+   * display text in centered format
+   * need to fix as adjustments were made not knowing Right align was active
+   * kept for now as it works. 
+   * 
+   *****************************************************************************/
+  void display2() {
+    updateFocus();
+    cursorX = textWidth(textStr.substring(0, textStr.length() - cursorPos)); // Recalcuate the cursor x position
+    textAlign(RIGHT, CENTER);
+    //println(cursorX, cursorPos, x + cursorX/2);
+    if (inFocus) {
+      if (second() % 2 == 0) {
+        stroke(0);
+        line(x + cursorX/2, y - clearance, 
+          x + cursorX/2, y + clearance + 3);
+      }
+    }
+    
+    // edit icon dropshadow
+    noStroke();
+    fill(255);
+    ellipse(activeX - dropShadowSize/2, activeY - dropShadowSize/2, activeSize + 3, activeSize + 3);
+    fill(0, 30);
+    ellipse(activeX + dropShadowSize, activeY + dropShadowSize, activeSize + 3, activeSize + 3);
+    
+    // edit icon
+    fill(245);
+    ellipse(activeX, activeY, activeSize + 3, activeSize +3);
+    if (active() || inFocus) {
+      image(editIconRed, activeX - activeSize/2, activeY - activeSize/2);
+      fill(highlight);
+    } else {
+      image(editIconBlack, activeX - activeSize/2, activeY - activeSize/2);
+      fill(0);
+    }
+    
+    // display text string
+    text(textStr, x + (textWidth(textStr) - cursorX/2), y);
+  }
+
+  /******************************************************************************
+   * 
+   * normal display left align
+   * 
+   *****************************************************************************/
+  void display() {
+    updateFocus();
+    textAlign(LEFT);
+    textSize(txtSize);
+    //if (active() || inFocus) {      // #Fix Do I want this to work on active as well?
+    if (inFocus) {
+      fill(0);
+      stroke(0);
+      if (second() % 2 == 0) {
+        line(x + cursorX, y, x + cursorX, y - (h - clearance));
+      }
+    } else {
+      fill(100);
+      stroke(100);
+    }
+    line(x, y + clearance, x + w, y + clearance);
+    textSize(20);
+
+    //text(textStr, x, y);
+    noFill();
+    ellipse(activeX, activeY, activeSize, activeSize);
+  }
+
+  /******************************************************************************
+   * 
+   * not in use... carried over from prior project
+   * 
+   *****************************************************************************/
+  String hideString(String s) {
+    String newString = "";
+    for (int i = 0; i < s.length(); i++) {
+      int v = 42 - int(s.charAt(i));
+      newString += char(int(s.charAt(i)) + v);
+    }
+
+    return newString;
+  }
+
+  /******************************************************************************
+   * 
+   * track active state
+   *
+   * @param      true if mouse over edit icon 
+   *****************************************************************************/
+  boolean active() {
+    float d = dist(activeX, activeY, mouseX, mouseY);
+    if (d < activeSize/2) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  /******************************************************************************
+   * 
+   * track selected state
+   * 
+   * @return       true if active and mouse pressed
+   *****************************************************************************/
+  boolean selected() {
+    if (active() && mousePressed) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  /******************************************************************************
+   * 
+   * track deselect state
+   * 
+   * @return      true if mouse click anywhere other than edit icon
+   *****************************************************************************/
+  boolean deSelect() {
+    if (!active() && mousePressed) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+}
