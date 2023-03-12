@@ -59,6 +59,25 @@
  </tr>
 </table>
 
+##  Guide Features
+<table>
+ <tr>
+    <td>
+      <img width="300" src="https://github.com/yahirRendon/creative_coding/blob/main/processing/app_projects/jewelry_designer/data/jd-guide-ui.gif" alt="ui guide example"/>
+   </td>
+    <td>
+      <table>
+        <tr>
+          <td>- move up and down individual rows to make beading easer</td>
+        </tr>
+        <tr>
+          <td>- see bead row in bottow left corner</td>
+        </tr>
+      </table>
+    </td>
+ </tr>
+</table>
+
 ##  Message Features
 <table>
   <tr>
@@ -80,7 +99,7 @@
   </tr>
 </table>
 
-##  Message Features
+##  Settings Features
 <table>
   <tr>
     <td>
@@ -107,16 +126,16 @@
   </tr>
   <tr>
     <td>spread style: built-in spread styles<br>
-    &nbsp;&nbsp;&nbsp;&nbsp;gap fill: alternating from center**<br>
-    &nbsp;&nbsp;&nbsp;&nbsp;sine out: uses sine interpolation from center*<br>
-    &nbsp;&nbsp;&nbsp;&nbsp;quad out: uses quadratic interpolation from center*<br>
-    &nbsp;&nbsp;&nbsp;&nbsp;expo out: uses exponential interpolation from center*<br>
-    &nbsp;&nbsp;&nbsp;&nbsp;random all: random distribution with gap value controlling density<br>
-    &nbsp;&nbsp;&nbsp;&nbsp;random solid: random but solid span adjustable<br>
-    &nbsp;&nbsp;&nbsp;&nbsp;sine in: uses sine interpolation from ends*<br>
-    &nbsp;&nbsp;&nbsp;&nbsp;quad in: uses quadratic interpolation from ends*<br>
-    &nbsp;&nbsp;&nbsp;&nbsp;expo in: uses exponential interpolation from ends*<br>
-    &nbsp;&nbsp;&nbsp;&nbsp;all open: all beads open excluding vertical and horizontal margins*<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;- gap fill: alternating from center**<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;- sine out: uses sine interpolation from center*<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;- quad out: uses quadratic interpolation from center*<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;- expo out: uses exponential interpolation from center*<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;- random all: random distribution with gap value controlling density<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;- random solid: random but solid span adjustable<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;- sine in: uses sine interpolation from ends*<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;- quad in: uses quadratic interpolation from ends*<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;- expo in: uses exponential interpolation from ends*<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;- all open: all beads open excluding vertical and horizontal margins*<br>
     &nbsp;&nbsp;&nbsp;&nbsp;* solid span adjustable<br>
     &nbsp;&nbsp;&nbsp;&nbsp;* solid spand and gap adjustable<br>
     </td>
@@ -126,13 +145,8 @@
   </tr>
 </table>
 
-
-
-
-
 ## To Do
-<p>- info soon
-<br>- info soon
+<p>- make bead color selectable
 </p>
 
 ## Usage Notes
