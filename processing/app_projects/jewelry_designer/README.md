@@ -23,30 +23,36 @@
 <table>
  <tr>
     <td>
-      <img width="300" src="https://github.com/yahirRendon/creative_coding/blob/main/processing/app_projects/jewelry_designer/data/jewelry-designer-ui-grid.png" alt="ui example"/>
+      <img width="300" src="https://github.com/yahirRendon/creative_coding/blob/main/processing/app_projects/jewelry_designer/data/jd-grid-ui.gif" alt="ui example"/>
    </td>
     <td>
       <table>
         <tr>
-          <td>1. Bead Grid - the beads that make up the piece of jewelry.</td>
+          <td>- increase or decrease the display bead size</td>
         </tr>
         <tr>
-          <td>2. Dark Bead - represents the bit value of 0</td>
+          <td>- scroll the beads up or down within the container window</td>
         </tr>
         <tr>
-          <td>3. light Bead - represents the bit value of 1</td>
+          <td>- mouse over bead to reveal bead number in the bottom left corner</td>
+        </tr> 
+        <tr>
+          <td>- left click to make bead open to holding message bit</td>
         </tr>
         <tr>
-          <td>4. White Bead - empty or does not represent bit within text</td>
+          <td>- right click to remove bead from holding message bit</td>
+        </tr> 
+        <tr>
+          <td>- red bead represents unassigned bit value within current spread style</td>
         </tr>
         <tr>
-          <td>5. Red Bead - a bead open within the design but not filled with a 0 or 1</td>
-        </tr>     
-        <tr>
-          <td>6. Scroll Bar - move the beads up or down within the container window.</td>
+          <td>- dark bead represents bit value of 0 within message</td>
         </tr>
         <tr>
-          <td>7. Zoom Bar - increase or decrease the display bead size</td>
+          <td>- light bead represents bit value of 1 within message</td>
+        </tr>
+        <tr>
+          <td>- white bead is a filler bead and not part of message</td>
         </tr>
       </table>
     </td>
