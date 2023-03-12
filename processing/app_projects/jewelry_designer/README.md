@@ -6,7 +6,7 @@
   <br>Take a string of text and convert it to binary and embed the result within the beads. 
 </p>
 
-## Demo
+## Preview
 <p align="center">
   <img width="600" align="center" src="https://github.com/yahirRendon/creative_coding/blob/main/processing/app_projects/jewelry_designer/data/jewerly-designer-ui-ex.png" alt="ui example"/>
 </p>
@@ -58,6 +58,29 @@
     </td>
  </tr>
 </table>
+
+##  Message Features
+<table>
+  <tr>
+    <td>
+      <img width="600" src="https://github.com/yahirRendon/creative_coding/blob/main/processing/app_projects/jewelry_designer/data/jd-message-ui.gif" alt="ui example"/>
+    </td>
+  </tr>
+  <tr>
+    <td>- edit text via the edit icon</td>
+  </tr>
+  <tr>
+    <td>- text appears read when editing</td>
+  </tr>
+  <tr>
+    <td>- bead bit values update in real time with text</td>
+  </tr>
+  <tr>
+    <td>- working backspace, clear/delete, left arrow, and right arrow</td>
+  </tr>
+</table>
+
+
 
 ## To Do
 <p>- info soon
