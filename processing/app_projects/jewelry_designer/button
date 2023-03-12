@@ -1,0 +1,210 @@
+/******************************************************************************
+ *
+ * class for creating basic toggle buttons
+ *
+ *****************************************************************************/
+class Button {
+  boolean on;        // track if button has been toggled on
+  boolean prior;     // track prior button state
+  int x, y;          // the x and y position of the button (center)
+  int buttonSize;    // size of the button
+  String btnName;    // name of the button
+  String btnName2;   // alt button name
+
+  /******************************************************************************
+   * constructor
+   * 
+   * @param  _x       the x position
+   * @param  _y       the y position
+   * @param  _sze     the button size
+   *****************************************************************************/
+  Button(int _x, int _y, int _sze) {
+    x = _x;
+    y = _y;
+    btnName = "";
+    btnName2 = "";
+    on = false;
+    prior = true;
+    buttonSize = _sze;
+  }
+
+  /******************************************************************************
+   * constructor
+   * 
+   * @param  _x       the x position
+   * @param  _y       the y position
+   * @param  _sze     the button size
+   * @param  _name    the name of the button
+   *****************************************************************************/
+  Button(int _x, int _y, int _sze, String _name) {
+    x = _x;
+    y = _y;
+    btnName = _name;
+    btnName2 = "";
+    on = false;
+    prior = true;
+    buttonSize = _sze;
+  }
+
+  /******************************************************************************
+   * constructor
+   * 
+   * @param  _x       the x position
+   * @param  _y       the y position
+   * @param  _sze     the button size
+   * @param  _name    the name of the button
+   * @param  _name2   the alt name of button
+   *****************************************************************************/
+  Button(int _x, int _y, int _sze, String _name, String _name2) {
+    x = _x;
+    y = _y;
+    btnName = _name;
+    btnName2 = _name2;
+    on = false;
+    prior = true;
+    buttonSize = _sze;
+  }
+
+  /******************************************************************************
+   * 
+   * display button basic
+   * 
+   *****************************************************************************/
+  void display() {
+    // drop shadow effect
+    noStroke();
+    fill(255);
+    ellipse(x - dropShadowSize/2, y - dropShadowSize/2, buttonSize, buttonSize);
+    fill(0, 30);
+    ellipse(x + dropShadowSize, y + dropShadowSize, buttonSize, buttonSize);
+
+    // button
+    fill(245);
+    ellipse(x, y, buttonSize, buttonSize);
+
+    fill(0);
+    if (active()) {
+      fill(highlight);
+    }
+
+    textAlign(CENTER, CENTER);
+    textSize(14);
+    text(btnName, x, y);
+    //text(btnName2, x, y - 4);
+  }
+
+  /******************************************************************************
+   * 
+   * display button with minus/decrement symbol
+   * 
+   *****************************************************************************/
+  void displayMinus() {
+    // drop shadow effect
+    noStroke();
+    fill(255);
+    ellipse(x - dropShadowSize/2, y - dropShadowSize/2, buttonSize, buttonSize);
+    fill(0, 30);
+    ellipse(x + dropShadowSize, y + dropShadowSize, buttonSize, buttonSize);
+
+    // button
+    fill(245);
+    ellipse(x, y, buttonSize, buttonSize);  
+
+    // symbol hightlight on hover
+    stroke(0);
+    if (active()) {
+      stroke(highlight);
+    }
+    line(x - (buttonSize* .25), y, x + (buttonSize * .25), y);
+  }
+
+  /******************************************************************************
+   * 
+   * display button with plus/increment symbol
+   * 
+   *****************************************************************************/
+  void displayPlus() {
+    // drop shadow effect
+    noStroke();
+    fill(255);
+    ellipse(x - dropShadowSize/2, y - dropShadowSize/2, buttonSize, buttonSize);
+    fill(0, 30);
+    ellipse(x + dropShadowSize, y + dropShadowSize, buttonSize, buttonSize);
+
+    // button
+    fill(245);
+    ellipse(x, y, buttonSize, buttonSize); 
+
+    // symbol hightlight on hover
+    stroke(0);
+    if (active()) {
+      stroke(highlight);
+    }
+    line(x - (buttonSize* .25), y, x + (buttonSize * .25), y);
+    line(x, y - (buttonSize* .25), x, y + (buttonSize* .25));
+  }
+
+  /******************************************************************************
+   * 
+   * display button as a disc
+   * 
+   *****************************************************************************/
+  void displayDisc(color _c) {
+    // drop shadow effect
+    noFill();
+    strokeWeight(10);
+    stroke(255);
+    ellipse(x - dropShadowSize/2, y - dropShadowSize/2, buttonSize, buttonSize);
+    stroke(0, 30);
+    ellipse(x + dropShadowSize, y + dropShadowSize, buttonSize, buttonSize);
+
+    // button
+    strokeWeight(10);
+    noFill();
+    stroke(_c);
+    ellipse(x, y, buttonSize, buttonSize);
+    strokeWeight(1);
+
+    fill(0);
+    textAlign(CENTER, CENTER);
+    textSize(14);
+    text(btnName, x, y);
+  }
+
+  /******************************************************************************
+   * 
+   * toggle on state
+   * 
+   *****************************************************************************/
+  void update() {
+    if (active()) {
+      on = !on;
+    }
+  }
+
+  /******************************************************************************
+   * 
+   * set button to !on
+   * 
+   *****************************************************************************/
+  void reset() {
+    if (on) {
+      on = false;
+    }
+  }
+
+  /******************************************************************************
+   * 
+   * track active state
+   * 
+   * @return      true if mouse is within button
+   *****************************************************************************/
+  boolean active() {
+    float d = dist(mouseX, mouseY, x, y);
+    if (d < (buttonSize/2)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+}
