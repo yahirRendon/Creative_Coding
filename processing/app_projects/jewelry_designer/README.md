@@ -23,7 +23,7 @@
 <table>
  <tr>
     <td>
-      <img width="300" src="https://github.com/yahirRendon/creative_coding/blob/main/processing/app_projects/jewelry_designer/data/jd-grid-ui.gif" alt="ui example"/>
+      <img width="300" src="https://github.com/yahirRendon/creative_coding/blob/main/processing/app_projects/jewelry_designer/data/jd-grid-ui.gif" alt="ui grid example"/>
    </td>
     <td>
       <table>
@@ -63,7 +63,7 @@
 <table>
   <tr>
     <td>
-      <img width="600" src="https://github.com/yahirRendon/creative_coding/blob/main/processing/app_projects/jewelry_designer/data/jd-message-ui.gif" alt="ui example"/>
+      <img width="600" src="https://github.com/yahirRendon/creative_coding/blob/main/processing/app_projects/jewelry_designer/data/jd-message-ui.gif" alt="ui message example"/>
     </td>
   </tr>
   <tr>
@@ -79,6 +79,54 @@
     <td>- working backspace, clear/delete, left arrow, and right arrow</td>
   </tr>
 </table>
+
+##  Message Features
+<table>
+  <tr>
+    <td>
+      <img width="600" src="https://github.com/yahirRendon/creative_coding/blob/main/processing/app_projects/jewelry_designer/data/jd-settings-ui.gif" alt="ui settings example"/>
+    </td>
+  </tr>
+  <tr>
+    <td>rows - add/remove rows of beads from grid</td>
+  </tr>
+  <tr>
+    <td>columns - add/remove columns of beads from grid</td>
+  </tr>
+  <tr>
+    <td>vertical margin - increase/decrease vertical bead margin</td>
+  </tr>
+  <tr>
+    <td>horizontal margin - increase/decrease horizontal bead margin</td>
+  </tr>
+  <tr>
+    <td>solid span - increase/decrease number of solid rows from center</td>
+  </tr>
+  <tr>
+    <td>gap: increase/decrease gap between spread</td>
+  </tr>
+  <tr>
+    <td>spread style: built-in spread styles<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;gap fill: alternating from center**<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;sine out: uses sine interpolation from center*<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;quad out: uses quadratic interpolation from center*<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;expo out: uses exponential interpolation from center*<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;random all: random distribution with gap value controlling density<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;random solid: random but solid span adjustable<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;sine in: uses sine interpolation from ends*<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;quad in: uses quadratic interpolation from ends*<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;expo in: uses exponential interpolation from ends*<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;all open: all beads open excluding vertical and horizontal margins*<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;* solid span adjustable<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;* solid spand and gap adjustable<br>
+    </td>
+  </tr>
+  <tr>
+    <td>bead size: adjust bead size for dimension calculation only</td>
+  </tr>
+</table>
+
+
 
 
 
