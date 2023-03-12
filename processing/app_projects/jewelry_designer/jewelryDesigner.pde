@@ -223,12 +223,6 @@ void keyPressed() {
     guideRow++;
     if (guideRow > bg.rows - 1) guideRow = 0;
   }
-  
-  if(!msgTF.inFocus && !saveNameTF.inFocus) {
-    if(key == 's' || key == 'S') {
-      saveFrame("data/ui-######.png");
-    }
-  }
 }
 
 /******************************************************************************
