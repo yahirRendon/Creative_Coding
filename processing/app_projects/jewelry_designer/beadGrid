@@ -1,0 +1,750 @@
+/******************************************************************************
+ *
+ * class for creating a grid of beads that will map out the jewelery piece
+ * 
+ *****************************************************************************/
+class BeadGrid {
+  int xpos, ypos;           // not used: the center for adjusting bead grid position
+  ArrayList<Bead> beads;    // array containing all the beads in the grid
+  int cols;                 // number of columns in the grid
+  int rows;                 // number of rows in the grid
+  int beadSize;             // size of an individual bead in the grid
+
+  int midRow;               // track the middle row
+  int midCol;               // track the midle column 
+  int midRowMin;            // track the middle row above center and solid span
+  int midRowMax;            // track the middle row below center and solid span
+
+  int solidSpan;            // num of rows of open beads from center
+  int verticalCap;          // row clearance from top and bottom
+  int horizontalCap;        // column clearance from left and right
+  int spreadGap;            // gap between alternating spreads 
+  int spreadType;           // type of spread within spread space 
+  //(all beads not in the solid span, top/bottom clearance, or left/right clearance)
+  int spreadStyleMax;       // total number of spread styles to loop through
+  String spreadStyleText;   // track name of spread styles for user feedback
+
+  int numBeads0;            // track number of beads that represent value 0
+  int numBeads1;            // track number of beads that represent value 1
+  int numBeads2;            // track number of beads that represent of other value
+  int numBeadsOpen;         // track number of open beads available to fill with 0 or 1
+
+  /******************************************************************************
+   * constructor
+   * 
+   * @param  _cols      the number of columns in the grid
+   * @param  _rows      the number of rows in the grid
+   * @param  _bs        the size of the beads
+   *****************************************************************************/
+  BeadGrid(int _cols, int _rows, int _bs) {
+    cols = _cols;
+    rows = _rows;
+    beadSize = _bs; 
+    solidSpan = 2;
+    verticalCap = 2;
+    horizontalCap = 1;
+    spreadGap = 2; 
+    spreadType = 2;
+    spreadStyleMax = 10;
+
+    // populate basic grid
+    beads = new ArrayList<Bead>();
+    for (int y = 0; y < rows; y++) {
+      for (int x = 0; x < cols; x++) {
+        beads.add(new Bead(x, y, cols, rows, beadSize));
+      }
+    }
+
+    // set spread style
+    selectSpreadDisplay();
+  }
+  
+  /******************************************************************************
+   * 
+   * set all beads in the grid to closed
+   * 
+   *****************************************************************************/
+  void closeAllBeads() {
+    for (int y = 0; y < rows; y++) {
+      for (int x = 0; x < cols; x++) {
+        int index = x + y * cols;
+        beads.get(index).reset();
+      }
+    }
+  }
+
+  /******************************************************************************
+   * 
+   * assign bit values to beads based on the text string
+   *
+   * @param  _msg    the array of bit values representing text string
+   *****************************************************************************/
+  void assignMsgToBeads(ArrayList<Integer> _msg) {
+    // assign beads values from message
+    int position = 0;
+    for (int y = 0; y < rows; y++) {
+      for (int x = 0; x < cols; x++) {
+        int index = x + y * cols;
+        if (index < beads.size()) {
+          beads.get(index).bitValue = 2;
+          if (beads.get(index).open) {
+            if (position < _msg.size()) {
+              beads.get(index).bitValue = _msg.get(position);
+              position++;
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  /******************************************************************************
+   * 
+   * calculate the various types of beads given their bit values
+   * 
+   *****************************************************************************/
+  void calculateBeadNumbers() {
+    // calculate number of bead types;
+    numBeads0 = 0; 
+    numBeads1 = 0; 
+    numBeads2 = 0;
+    numBeadsOpen = 0;
+    for (int i = 0; i < beads.size(); i++) {
+      if (beads.get(i).open) {
+        numBeadsOpen++;
+      }
+      if (beads.get(i).bitValue == 0) {
+        numBeads0++;
+      }
+      if (beads.get(i).bitValue == 1) {
+        numBeads1++;
+      }
+      if (beads.get(i).bitValue == 2) {
+        numBeads2++;
+      }
+    }
+  }
+
+  /******************************************************************************
+   * 
+   * add a row of beads
+   * 
+   *****************************************************************************/
+  void addBeadRow() {
+    rows++;
+    for (int x = 0; x < cols; x++) {
+      beads.add(new Bead(x, rows - 1, cols, rows, beadSize));
+    }
+
+    updateBeadPosition();
+  }
+
+  /******************************************************************************
+   * 
+   * remove a row of beads
+   * 
+   *****************************************************************************/
+  void delBeadRow() {
+    rows--;
+    for (int x = 0; x < cols; x++) {
+      beads.remove(beads.get(beads.size() - 1));
+    }
+
+    updateBeadPosition();
+  }
+
+  /******************************************************************************
+   * 
+   * add a column of beads
+   * 
+   *****************************************************************************/
+  void addBeadColumn() {
+    cols++;
+    for (int y = 0; y < rows; y++) {
+      beads.add(new Bead(cols - 1, y, cols, rows, beadSize));
+    }
+
+    ArrayList<Bead> temp = new ArrayList<Bead>();
+    int i = 0;
+    for (int y = 0; y < rows; y++) {
+      for (int x = 0; x < cols; x++) {
+
+        temp.add(new Bead(x, y, cols, rows, beadSize));
+        i++;
+      }
+    }
+
+    for (int j = 0; j < beads.size(); j++) {
+      if (beads.get(j).open) {
+        int newdex = beads.get(j).x + beads.get(j).y * (cols - 1);
+        newdex += beads.get(j).y;
+        temp.get(newdex).open = true;
+        temp.get(newdex).bitValue = beads.get(j).bitValue;
+      }
+    }
+
+    beads.clear();
+    beads = temp;
+  }
+
+  /******************************************************************************
+   * 
+   * remove a coloumn of beads
+   * 
+   *****************************************************************************/
+  void delBeadColumn() {
+    for (int y = 0; y < rows; y++) {
+      int index = ((cols - 1) + y * cols) - y;
+
+      beads.remove(index);
+    }
+    cols--;
+
+    updateBeadPosition();
+  }
+
+  /******************************************************************************
+   * 
+   * increase size of all beads
+   * 
+   *****************************************************************************/
+  void incrementBeadSize() {
+    if (beadSize < 41) beadSize++;
+    updateBeadPosition();
+  }
+
+  /******************************************************************************
+   * 
+   * decrease size of all beads
+   * 
+   *****************************************************************************/
+  void decrementBeadSize() {
+    if (beadSize > 8) beadSize--;
+    updateBeadPosition();
+  }
+
+  /******************************************************************************
+   * bead size setter method
+   * 
+   * @param  _val      the bead size value
+   *****************************************************************************/
+  void setBeadSize(int _val) {
+    beadSize = _val;
+    updateBeadPosition();
+  }
+
+  /******************************************************************************
+   * 
+   * update position of all beads in the grid
+   * 
+   *****************************************************************************/
+  void updateBeadPosition() {
+    for (int i = 0; i < beads.size(); i++) {
+      beads.get(i).updatePosition(cols, rows, beadSize);
+    }
+  }
+
+  /******************************************************************************
+   * calculate the elements that help set start and end points for availbe beads
+   * when considering default bead open selection
+   *****************************************************************************/
+  void calcLimits() {
+    midRow = (rows/2);
+    midRowMin = midRow - solidSpan - 1;
+    midRowMax = midRow + solidSpan;
+    if (rows % 2 != 0) {
+      midRowMin ++;
+    }
+  }
+
+  /******************************************************************************
+   * 
+   * built-in open pattern: set all availbe beads to open
+   * 
+   *****************************************************************************/
+  void setDefaultAllOpen() {
+    // loop through grid ignoring vertical and horizontal caps
+    for (int y = verticalCap; y < rows - verticalCap; y++) {
+      for (int x = horizontalCap; x < cols - horizontalCap; x++) {
+        int index = x + y * cols;
+
+        // top half of grid ignroing solid span
+        if (y <= midRowMin) {
+          // just open all in range
+          beads.get(index).open = true;
+        }
+
+        // middle section - solid span
+        if (y > midRowMin && y < midRowMax) {
+          beads.get(index).open = true;
+        }
+
+        // bottom half of grid ignoring solid span
+        if (y >= midRowMax) {
+          // just open all in range
+          beads.get(index).open = true;
+        }
+      }
+    }
+  }
+
+  /******************************************************************************
+   * 
+   * built-in open pattern: open beads that fall along speardGap
+   * 
+   *****************************************************************************/
+  void setDefaultGapJump() {
+    // loop through grid ignoring vertical and horizontal caps
+    for (int y = verticalCap; y < rows - verticalCap; y++) {
+      for (int x = horizontalCap; x < cols - horizontalCap; x++) {
+        int index = x + y * cols;
+
+        // top half of grid ignroing solid span
+        if (y <= midRowMin) {
+          // open those that fall on spreadGap
+          if (y % spreadGap == 0) {
+            beads.get(index).open = true;
+          }
+        }
+
+        // middle section - solid span
+        if (y > midRowMin && y < midRowMax) {
+          beads.get(index).open = true;
+        }
+
+        // bottom half of grid ignoring solid span
+        if (y >= midRowMax) {
+          // open those that fall on spreadGap
+          int yindex = y - midRowMax + verticalCap;
+          if (yindex % spreadGap == 0) {
+            int newIndex = x + (rows  - 1 - yindex) * cols;
+            beads.get(newIndex).open = true;
+          }
+        }
+      }
+    }
+  }
+
+  /******************************************************************************
+   * 
+   * built-in open pattern: open beads in between spradGap
+   * 
+   *****************************************************************************/
+  void setDefaultGapFill() {
+    // loop through grid ignoring vertical and horizontal caps
+    for (int y = verticalCap; y < rows - verticalCap; y++) {
+      for (int x = horizontalCap; x < cols - horizontalCap; x++) {
+        int index = x + y * cols;
+
+        // top half of grid ignroing solid span
+        if (y <= midRowMin) {
+          // open those that fall in between spreadGap
+          if (y % spreadGap != 0) {
+            beads.get(index).open = true;
+          }
+        }
+
+        // middle section - solid span
+        if (y > midRowMin && y < midRowMax) {
+          beads.get(index).open = true;
+        }
+
+        // bottom half of grid ignoring solid span
+        if (y >= midRowMax) {
+          // open those that fall in between spreadGap
+          int yindex = y - midRowMax + verticalCap;
+          if (yindex % spreadGap != 0) {
+            int newIndex = x + (rows  - 1 - yindex) * cols;
+            beads.get(newIndex).open = true;
+          }
+        }
+      }
+    }
+  }
+
+  /******************************************************************************
+   * 
+   * built-in open pattern: open beads using sine out interpolation
+   * 
+   *****************************************************************************/
+  void setDefaultSerpOut() {
+    // loop through grid ignoring vertical and horizontal caps
+    for (int y = verticalCap; y < rows - verticalCap; y++) {
+      for (int x = horizontalCap; x < cols - horizontalCap; x++) {
+        int index = x + y * cols;
+
+        // top half of grid ignroing solid span
+        if (y <= midRowMin) {
+          // calculate normal within range and get new index value using sine interpulation
+          float norm = map(y, verticalCap, midRowMin, 0, 1);
+          int newy = int(serpOut(verticalCap, midRowMin, norm));
+          int newIndex = x + newy * cols;
+          beads.get(newIndex).open = true;
+        }
+
+        // middle section - solid span
+        if (y > midRowMin && y < midRowMax) {
+          beads.get(index).open = true;
+        }
+
+        // bottom half of grid ignoring solid span
+        if (y >= midRowMax) {
+          // calculate range
+          int b = (rows  - 1) - midRowMax;
+          int yindex = y - midRowMax + verticalCap;
+          // calculate normal within range and get new index value using sine interpulation
+          float norm = map(yindex, verticalCap, b, 0, 1);
+          int newy = int(serpOut(verticalCap, b, norm));
+          int newIndex = x + (rows  - 1 - newy) * cols;
+          beads.get(newIndex).open = true;
+        }
+      }
+    }
+  }
+
+  /******************************************************************************
+   * 
+   * built-in open pattern: open beads using quad out interpolation
+   * 
+   *****************************************************************************/
+  void setDefaultQuadOut() {
+    // loop through grid ignoring vertical and horizontal caps
+    for (int y = verticalCap; y < rows - verticalCap; y++) {
+      for (int x = horizontalCap; x < cols - horizontalCap; x++) {
+        int index = x + y * cols;
+
+        // top half of grid ignroing solid span
+        if (y <= midRowMin) {
+          // calculate normal within range and get new index value using sine interpulation
+          float norm = map(y, verticalCap, midRowMin, 0, 1);
+          int newy = int(qerpOut(verticalCap, midRowMin, norm));
+          int newIndex = x + newy * cols;
+          beads.get(newIndex).open = true;
+        }
+
+        // middle section - solid span
+        if (y > midRowMin && y < midRowMax) {
+          beads.get(index).open = true;
+        }
+
+        // bottom half of grid ignoring solid span
+        if (y >= midRowMax) {
+          // calculate range
+          int b = (rows  - 1) - midRowMax;
+          int yindex = y - midRowMax + verticalCap;
+          // calculate normal within range and get new index value using sine interpulation
+          float norm = map(yindex, verticalCap, b, 0, 1);
+          int newy = int(qerpOut(verticalCap, b, norm));
+          int newIndex = x + (rows  - 1 - newy) * cols;
+          beads.get(newIndex).open = true;
+        }
+      }
+    }
+  }
+
+  /******************************************************************************
+   * 
+   * built-in open pattern: open beads using exponential out interpolation
+   * 
+   *****************************************************************************/
+  void setDefaultExerpOut() {
+    // loop through grid ignoring vertical and horizontal caps
+    for (int y = verticalCap; y < rows - verticalCap; y++) {
+      for (int x = horizontalCap; x < cols - horizontalCap; x++) {
+        int index = x + y * cols;
+
+        // top half of grid ignroing solid span
+        if (y <= midRowMin) {
+          // calculate normal within range and get new index value using sine interpulation
+          float norm = map(y, verticalCap, midRowMin, 0, 1);
+          int newy = int(exerpOut(verticalCap, midRowMin, norm));
+          int newIndex = x + newy * cols;
+          beads.get(newIndex).open = true;
+        }
+
+        // middle section - solid span
+        if (y > midRowMin && y < midRowMax) {
+          beads.get(index).open = true;
+        }
+
+        // bottom half of grid ignoring solid span
+        if (y >= midRowMax) {
+          // calculate range
+          int b = (rows  - 1) - midRowMax;
+          int yindex = y - midRowMax + verticalCap;
+          // calculate normal within range and get new index value using sine interpulation
+          float norm = map(yindex, verticalCap, b, 0, 1);
+          int newy = int(exerpOut(verticalCap, b, norm));
+          int newIndex = x + (rows  - 1 - newy) * cols;
+          beads.get(newIndex).open = true;
+        }
+      }
+    }
+  }
+
+  /******************************************************************************
+   * 
+   * built-in open pattern: randomly set availbe beads to open
+   * spreadGap to control density
+   *****************************************************************************/
+  void setDefaultRandomOpen() {
+    // loop through grid ignoring vertical and horizontal caps
+    for (int y = verticalCap; y < rows - verticalCap; y++) {
+      for (int x = horizontalCap; x < cols - horizontalCap; x++) {
+        int index = x + y * cols;
+
+        // select random number and open if == 0
+        int rand = int(random(0, spreadGap));
+        if (rand == 0) {
+          beads.get(index).open = true;
+        }
+      }
+    }
+  }
+
+  /******************************************************************************
+   * 
+   * built-in open pattern: randomly set availbe beads to open
+   * spreadGap to control density
+   *****************************************************************************/
+  void setDefaultRandomBarOpen() {
+    // loop through grid ignoring vertical and horizontal caps
+    for (int y = verticalCap; y < rows - verticalCap; y++) {
+      for (int x = horizontalCap; x < cols - horizontalCap; x++) {
+        int index = x + y * cols;
+
+        // select random number and open if == 0
+        int rand = int(random(0, spreadGap));
+        if (rand == 0) {
+          beads.get(index).open = true;
+        }
+        // middle section - solid span
+        if (y > midRowMin && y < midRowMax) {
+          // open solid bar in middle
+          beads.get(index).open = true;
+        }
+      }
+    }
+  }
+  
+  /******************************************************************************
+   * 
+   * built-in open pattern: open beads using sine int interpolation
+   * 
+   *****************************************************************************/
+  void setDefaultSerpIn() {
+    // loop through grid ignoring vertical and horizontal caps
+    for (int y = verticalCap; y < rows - verticalCap; y++) {
+      for (int x = horizontalCap; x < cols - horizontalCap; x++) {
+        int index = x + y * cols;
+
+        // top half of grid ignroing solid span
+        if (y <= midRowMin) {
+          // calculate normal within range and get new index value using sine interpulation
+          float norm = map(y, verticalCap, midRowMin, 0, 1);
+          int newy = int(serpIn(verticalCap, midRowMin, norm));
+          int newIndex = x + newy * cols;
+          beads.get(newIndex).open = true;
+        }
+
+        // middle section - solid span
+        if (y > midRowMin && y < midRowMax) {
+          beads.get(index).open = true;
+        }
+
+        // bottom half of grid ignoring solid span
+        if (y >= midRowMax) {
+          // calculate range
+          int b = (rows  - 1) - midRowMax;
+          int yindex = y - midRowMax + verticalCap;
+          // calculate normal within range and get new index value using sine interpulation
+          float norm = map(yindex, verticalCap, b, 0, 1);
+          int newy = int(serpIn(verticalCap, b, norm));
+          int newIndex = x + (rows  - 1 - newy) * cols;
+          beads.get(newIndex).open = true;
+        }
+      }
+    }
+  }
+  
+  /******************************************************************************
+   * 
+   * built-in open pattern: open beads using quad in interpolation
+   * 
+   *****************************************************************************/
+  void setDefaultQuadIn() {
+    // loop through grid ignoring vertical and horizontal caps
+    for (int y = verticalCap; y < rows - verticalCap; y++) {
+      for (int x = horizontalCap; x < cols - horizontalCap; x++) {
+        int index = x + y * cols;
+
+        // top half of grid ignroing solid span
+        if (y <= midRowMin) {
+          // calculate normal within range and get new index value using sine interpulation
+          float norm = map(y, verticalCap, midRowMin, 0, 1);
+          int newy = int(qerpIn(verticalCap, midRowMin, norm));
+          int newIndex = x + newy * cols;
+          beads.get(newIndex).open = true;
+        }
+
+        // middle section - solid span
+        if (y > midRowMin && y < midRowMax) {
+          beads.get(index).open = true;
+        }
+
+        // bottom half of grid ignoring solid span
+        if (y >= midRowMax) {
+          // calculate range
+          int b = (rows  - 1) - midRowMax;
+          int yindex = y - midRowMax + verticalCap;
+          // calculate normal within range and get new index value using sine interpulation
+          float norm = map(yindex, verticalCap, b, 0, 1);
+          int newy = int(qerpIn(verticalCap, b, norm));
+          int newIndex = x + (rows  - 1 - newy) * cols;
+          beads.get(newIndex).open = true;
+        }
+      }
+    }
+  }
+
+  /******************************************************************************
+   * 
+   * built-in open pattern: open beads using exponential in interpolation
+   * 
+   *****************************************************************************/
+  void setDefaultExerpIn() {
+    // loop through grid ignoring vertical and horizontal caps
+    for (int y = verticalCap; y < rows - verticalCap; y++) {
+      for (int x = horizontalCap; x < cols - horizontalCap; x++) {
+        int index = x + y * cols;
+
+        // top half of grid ignroing solid span
+        if (y <= midRowMin) {
+          // calculate normal within range and get new index value using sine interpulation
+          float norm = map(y, verticalCap, midRowMin, 0, 1);
+          int newy = int(exerpIn(verticalCap, midRowMin, norm));
+          int newIndex = x + newy * cols;
+          beads.get(newIndex).open = true;
+        }
+
+        // middle section - solid span
+        if (y > midRowMin && y < midRowMax) {
+          beads.get(index).open = true;
+        }
+
+        // bottom half of grid ignoring solid span
+        if (y >= midRowMax) {
+          // calculate range
+          int b = (rows  - 1) - midRowMax;
+          int yindex = y - midRowMax + verticalCap;
+          // calculate normal within range and get new index value using sine interpulation
+          float norm = map(yindex, verticalCap, b, 0, 1);
+          int newy = int(exerpIn(verticalCap, b, norm));
+          int newIndex = x + (rows  - 1 - newy) * cols;
+          beads.get(newIndex).open = true;
+        }
+      }
+    }
+  }
+
+  /******************************************************************************
+   * 
+   * select the desired spread style
+   * 
+   *****************************************************************************/
+  void selectSpreadDisplay() {
+    calcLimits();
+    closeAllBeads();
+    switch(spreadType) {
+    case 1:
+      spreadStyleText = "gap jump";
+      setDefaultGapJump();
+      break;
+    case 2:
+      spreadStyleText = "gap fill";
+      setDefaultGapFill();
+      break;
+    case 3:
+      spreadStyleText = "sine out";
+      setDefaultSerpOut();
+      break;
+    case 4:
+      spreadStyleText = "quad out";
+      setDefaultQuadOut();
+      break;
+    case 5:
+      spreadStyleText = "expo out";
+      setDefaultExerpOut();
+      break;
+    case 6:
+      spreadStyleText = "random all";
+      setDefaultRandomOpen();
+      break;
+    case 7:
+      spreadStyleText = "random solid";
+      setDefaultRandomBarOpen();
+      break;
+    case 8:
+      spreadStyleText = "sine in";
+      setDefaultSerpIn();
+      break;
+    case 9:
+      spreadStyleText = "quad in";
+      setDefaultQuadIn();
+      break;
+    case 10:
+      spreadStyleText = "expo in";
+      setDefaultExerpIn();
+      break;
+    case 0:
+    default:
+      spreadStyleText = "all open";
+      setDefaultAllOpen();
+      break;
+    }
+  }
+
+  /******************************************************************************
+   * 
+   * display all beads in the grid and also handle bead selection/deselection
+   * 
+   *****************************************************************************/
+  void display() {
+
+    for (int y = 0; y < rows; y++) {
+      for (int x = 0; x < cols; x++) {
+        int index = x + y * cols;
+
+        if (index < beads.size()) {
+          if (!beadGuide) {
+            // open beads
+            if (beads.get(index).active() && leftClicked) {
+              beads.get(index).open = true;
+            }
+            // close beads
+            if (beads.get(index).active() && rightClicked) {
+              beads.get(index).open = false;
+              beads.get(index).bitValue = 2;
+            }
+          }
+
+          int startx = beads.get(index).xpos;
+          int endx = beads.get(index).xpos + beads.get(index).fw;
+          int starty = beads.get(index).ypos;
+          int endy = beads.get(index).ypos + beads.get(index).fh;
+
+          if (startx > 51 && starty > 51 && endx < 351 && endy < 849) {
+            beads.get(index).display();
+          }
+        }
+      }
+    }
+
+    // display row guide number when bead guide engaged
+    textAlign(CENTER, CENTER);
+    fill(0);
+    if (beadGuide) {
+      text(guideRow + 1, 25, 875);
+    }
+  }
+}
