@@ -1,0 +1,147 @@
+/******************************************************************************
+ *
+ * class for creating basic slider for user controlling elements
+ *
+ *****************************************************************************/
+class Slider {
+  int x, y;          // the x and y position of slider (left)
+  int sx, sy;        // the position of slider scroll knob
+  int sliderSize;    // the size of the slider knob
+  int sliderVal;     // the value of the slider
+  int dir = 0;       // direction 0=vertical 1=horizontal
+  int len;           // length of the slider
+  int minY, maxY;    // min and max y values for setting limits
+  int minX, maxX;    // min and max x values for setting limits
+  int midX, midY;    // the middle x and y position
+
+  /******************************************************************************
+   * constructor
+   * 
+   * @param  _x      the x position of info bar
+   * @param  _y      the y position of info bar
+   * @param  _len    the slider length
+   * @param  _dir    the slider direction
+   * @param  _start  the start position
+   *****************************************************************************/
+  Slider(int _x, int _y, int _len, int _dir, int _start) {
+    x = _x;
+    y = _y;
+    len = _len;
+    sliderSize = 15;
+    dir =  _dir;
+    
+    // calcs based on direction
+    if (dir == 0) {
+      minY = _y;
+      maxY = minY + len;
+      midY = minY + (len/2); 
+      minX = _x;
+      maxX = _x;
+      midX = _x;
+      sx = _x;
+      sy = midY;
+    } else {  
+      minX = _x;
+      maxX = minX + len;
+      midX = minX + (len/2);
+      minY = _y;
+      maxY = _y;
+      midY = _y;
+      sx = _start;
+      sy = _y;
+      sliderVal = _start;
+    }
+  }
+  
+  /******************************************************************************
+   * 
+   * update the slider based on mouse position
+   * 
+   *****************************************************************************/
+  void update() {
+    if (selected()) {
+      if (dir == 0) {
+
+        if (mouseY > minY && mouseY < maxY) {
+          sy = mouseY;
+          sliderVal = midY - mouseY;
+        }
+      } else {
+        if (mouseX > minX && mouseX < maxX) {
+          sx = mouseX;
+          sliderVal = mouseX;
+        }
+      }
+    }
+  }
+  
+  /******************************************************************************
+   * 
+   * display the slider elements
+   * 
+   *****************************************************************************/
+  void display() {
+    if (dir == 0) {
+      // slider line
+      stroke(160);
+      line(minX, minY, maxX, maxY);
+      //line(minX - 12, midY, minX + 12, midY); // mid line 
+      
+      // slider knob dropshadow
+      noStroke();
+      fill(255);
+      ellipse(sx - dropShadowSize/2, sy - dropShadowSize/2, sliderSize, sliderSize);
+      fill(0, 30);
+      ellipse(sx + dropShadowSize, sy + dropShadowSize, sliderSize, sliderSize);
+      
+      // slider knob
+      fill(245);
+      ellipse(sx, sy, sliderSize, sliderSize);
+    } else {
+      // slider line
+      stroke(160);
+      line(minX, minY, maxX, maxY);
+      //line(midX, midY - 12, midX, midY + 12); // mid line    
+      
+      // slider knob dropshadow
+      noStroke();
+      fill(255);
+      ellipse(sx - dropShadowSize/2, sy - dropShadowSize/2, sliderSize, sliderSize);
+      fill(0, 30);
+      ellipse(sx + dropShadowSize, sy + dropShadowSize, sliderSize, sliderSize);
+      
+      // slider knob
+      fill(245);
+      ellipse(sx, sy, sliderSize, sliderSize);
+    }
+  }
+  
+  /******************************************************************************
+   * 
+   * track selected state of knob
+   * 
+   * @return        true when active and mouse is pressed
+   *****************************************************************************/
+  boolean selected() {
+    if (active() && mousePressed) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  
+  /******************************************************************************
+   * 
+   * track the active state of knob
+   * 
+   * @return        true when mouse hover over knob
+   *****************************************************************************/
+  boolean active() {
+    float d = dist(mouseX, mouseY, sx, sy);
+    if (d < sliderSize) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+}
