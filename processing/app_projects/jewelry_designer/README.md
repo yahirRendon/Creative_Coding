@@ -11,7 +11,7 @@
  
 ## Demo
 <p align="center">
-  <img width="400" align="center" src="https://github.com/yahirRendon/creative_coding/blob/main/processing/artistic_projects/PerlinNoiseFlowBasic/data/perlinNoiseFlow_anim.gif" alt="animation"/>
+  <img width="900" align="center" src="https://github.com/yahirRendon/creative_coding/blob/main/processing/app_projects/jewelry_designer/data/jewerly-designer-ui-ex.png" alt="ui example"/>
 </p>
 
 ##  Instructions
