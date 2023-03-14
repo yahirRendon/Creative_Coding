@@ -11,14 +11,16 @@
   There were a couple of challenges while developing this project. The first was figuring out how to 
   select and order the vertices of a generated shadow in such a way to only include points along the perimeter.
   I attempted to implement my own approach and got pretty close but had a few edge cases that made it imperfect. 
-  In doing further research I disocovered that a solution to this was to use a hull algorithm.
+  In doing further research I disocovered that a solution to this was to use a hull algorithm. With some further
+  research I was able to implement a quick hull algorithm. 
 </p>
 
 <p align="center">
   I initially attempted to create the shadow in 2D but found limitations when trying to mimick
   3D shadows so I moved to the P3D rendering in Processing. However, I had to then find a way to find
   the point at which a light ray intersected the plane on which the background image laid. After researching
-  some math forums found a way using line/plane intersection. 
+  some math forums found a way using line/plane intersection. This worked incredible well and coupled withe the 
+  prevously mentioned quick hull algorithm I was able to work out the core mechanism of this project. 
 </p>
 
 ## Preview
@@ -37,20 +39,20 @@
   
 </p>
 
-##  Instructions
+##  Instructions &nbsp;&nbsp;&nbsp;&nbsp;
 <p>
-  - LEFT MOUSE  | click and drag within artwork canvas to move<br>
-  - RIGHT MOUSE | click and drage horizonontally within artwork canvas to resize<br>
-  - SPACE KEY   | toggle user interface<br>
-  - 'd' KEY     | toggle dark mode<br>
-  - 'a' KEY     | load new artwork image<br>
-  - 'b' KEY     | load new background image<br>
-  - 's' KEY     | save image of current frame<br>
-  - 'l' KEY     | add additional light source<br>
-  - LEFT ARROW  | with ui active cycle through light/shadow settings down<br>
-  - RIGHT ARROW | with ui active cycle through light/shadow settings up<br>
-  - UP ARROW    | with ui active cycle throuhg light sources up<br>
-  - DOWN ARROW  | with ui active cycle through light sources down<br>
+  - LEFT MOUSE: click and drag within artwork canvas to move<br>
+  - RIGHT MOUSE: click and drage horizonontally within artwork canvas to resize<br>
+  - SPACE KEY: toggle user interface<br>
+  - 'd' KEY: toggle dark mode<br>
+  - 'a' KEY: load new artwork image<br>
+  - 'b' KEY: load new background image<br>
+  - 's' KEY: save image of current frame<br>
+  - 'l' KEY: add additional light source<br>
+  - LEFT ARROW: with ui active cycle through light/shadow settings down<br>
+  - RIGHT ARROW: with ui active cycle through light/shadow settings up<br>
+  - UP ARROW: with ui active cycle throuhg light sources up<br>
+  - DOWN ARROW: with ui active cycle through light sources down<br>
 </p>
 
 ## UI Review
@@ -59,6 +61,8 @@
 ## To Do
 <p>- fix text placement (z-axis)<br>
   - allow shadow alpha to take on different tones other than black
+  - add border
+  - textured canvas effect
 </p>
 
 ## Usage Notes
