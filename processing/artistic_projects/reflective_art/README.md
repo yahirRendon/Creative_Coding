@@ -20,7 +20,7 @@
  
 ## Demo
 <p align="center">
-  <img width="400" align="center" src="" alt="reflective art animation"/>
+  <img width="400" align="center" src="https://github.com/yahirRendon/creative_coding/blob/main/processing/artistic_projects/reflective_art/data/reflective-art-ex1.gif" alt="reflective art animation"/>
 </p>
 
 ##  Instructions
