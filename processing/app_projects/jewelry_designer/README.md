@@ -6,6 +6,14 @@
   <br>Take a string of text and convert it to binary and embed the result within the beads. 
 </p>
 
+## Dev Notes
+<p align="center">
+  I had the desire to create predefined layout designs using non-linear interpolation. I wanted them to be symmetrical accross the
+  center row. It caused me a few headaches but was able to find a solution that generated the same inputs but in reverse order for the top and bottom
+  half to ensure symmetry. Oddly, I found the random layout to be the most applying when actually working with beads. There are a lot of additional 
+  features that can be implemented but for the purpose of my own jewelry making this serves as a great tool. 
+</p>
+
 ## Preview
 <p align="center">
   <img width="600" align="center" src="https://github.com/yahirRendon/creative_coding/blob/main/processing/app_projects/jewelry_designer/data/jewerly-designer-ui-ex.png" alt="ui example"/>
