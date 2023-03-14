@@ -4,7 +4,7 @@
   I saw an ad in Instagram for a relaxing drawing up that mirrored a persons drawing. I figured I could create my own version of this. 
 </p>
 
-## Dev
+## Dev Notes
 <p align="center">
   This project wasn't too challenging and didn't build it out to any significant complexity. 
   I just used some trigonometry to reflect the mouse position when drawing by subdividing 360 degrees by the desired number fo reflections. 
@@ -20,8 +20,11 @@
  
 ## Demo
 <p align="center">
-  <img width="400" align="center" src="https://github.com/yahirRendon/creative_coding/blob/main/processing/artistic_projects/reflective_art/data/reflective-art-ex1.gif" alt="reflective art animation"/>
+  <img width="350" align="center" src="https://github.com/yahirRendon/creative_coding/blob/main/processing/artistic_projects/reflective_art/data/reflective-art-ex1.gif" alt="reflective art animation"/>
+  <img width="350" align="center" src="https://github.com/yahirRendon/creative_coding/blob/main/processing/artistic_projects/reflective_art/data/reflective-art-ex2.gif" alt="reflective art animation"/>
 </p>
+
+
 
 ##  Instructions
 <p>
