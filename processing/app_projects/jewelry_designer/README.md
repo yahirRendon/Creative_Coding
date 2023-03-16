@@ -145,7 +145,7 @@
     &nbsp;&nbsp;&nbsp;&nbsp;- expo in: uses exponential interpolation from ends*<br>
     &nbsp;&nbsp;&nbsp;&nbsp;- all open: all beads open excluding vertical and horizontal margins*<br>
     &nbsp;&nbsp;&nbsp;&nbsp;* solid span adjustable<br>
-    &nbsp;&nbsp;&nbsp;&nbsp;* solid spand and gap adjustable<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;* solid span and gap adjustable<br>
     </td>
   </tr>
   <tr>
