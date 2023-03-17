@@ -1,4 +1,4 @@
-<h1 align="center">Sweep</h1>
+<h1 align="center">Trominotris</h1>
 
 <p align="center">
   A simplified version of the classic Tetris game that uses trominoes, geometric shapes composed of three squares that connect along an edge. Given there are only two unique trominoes I decided to add a couple of irregular pieces to make the game more interesting. This version contains most of the core mechanics including rotating pieces, controlling drop speed, increasing fall speed over time, and a scoring system. 
