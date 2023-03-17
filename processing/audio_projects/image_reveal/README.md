@@ -7,14 +7,14 @@
 
 ## Preview
 <p align="center">
-  <a href="https://github.com/yahirRendon/creative_coding/tree/main/processing/audio_projects/image_reveal/image_reveal_grid">
+  <a href="https://github.com/yahirRendon/creative_coding/tree/main/processing/audio_projects/image_reveal/image_reveal_grid/imageRevealGrid.pde">
     <img alt="reveal grid"
        align="center" 
        width="350"      
        src="https://github.com/yahirRendon/creative_coding/blob/main/processing/audio_projects/image_reveal/data/image-reveal-grid.gif" 
     />
   </a>
-  <a href="https://github.com/yahirRendon/creative_coding/tree/main/processing/audio_projects/image_reveal">
+  <a href="https://github.com/yahirRendon/creative_coding/blob/main/processing/audio_projects/image_reveal/image_reveal_amp/imageRevealAmp.pde">
     <img alt="reveal amp"
        align="center" 
        width="350"      
@@ -22,5 +22,3 @@
     />
   </a>
 </p>
-
-
