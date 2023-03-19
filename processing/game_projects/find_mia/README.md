@@ -6,12 +6,12 @@
 
 ## Demo
 <p align="center">
-  <a href="">
+  <a href="https://github.com/yahirRendon/creative_coding/blob/main/processing/game_projects/find_mia/findMia.pde">
     <img 
       align="center"
       alt="game demo"
       width="600"  
-      src="" 
+      src="https://github.com/yahirRendon/creative_coding/blob/main/processing/game_projects/find_mia/data/find-mia.gif" 
     />
   </a>
 </p>
