@@ -25,6 +25,7 @@ import processing.sound.*;
 Timer timer;
 
 //Decalare audio object
+String path;         // path to audio files
 SoundFile audio1, audio2, audio3, audio4, 
   audio5, audio6, audio7, audio8, 
   audio9, audio10, audio11, audio12, welcomeAudio; 
@@ -131,8 +132,8 @@ String tutorialText11A = "Enjoy your stay at The Cube.";
  *************************************************************************************/
 void setup() {
   size(800, 800, FX2D);
-  cursor(HAND);
-  bckgrndImg = loadImage("bckgrnd800.jpg");
+  //cursor(HAND);
+  bckgrndImg = loadImage("../#data/bckgrnd800.jpg");
   
   timerEnd = false; 
   introFadeDone = false;  
@@ -157,40 +158,41 @@ void setup() {
   //#Timer
   timer = new Timer();
   
+  path = "../#data/winter/";
   // Assign audio track label to list audioList
-  audioList[0] = "";
-  audioList[1] = "";
-  audioList[2] = "";
-  audioList[3] = "";
+  audioList[0] = "140_G_VocalPads_1_TL.wav";
+  audioList[1] = "100_Beat_2_TL.wav";
+  audioList[2] = "120_Am_IntimateKeys_4_TL.wav";
+  audioList[3] = "130_Am_IntimateInstrument_Strings_4_TL.wav";
   
-  audioList[4] = "";
-  audioList[5] = "";
-  audioList[6] = "";
-  audioList[7] = "";
+  audioList[4] = "80_G_AmbientTexture_1_TL.wav";
+  audioList[5] = "100_Dm_AmbientPad_1_TL.wav";
+  audioList[6] = "120_Am_AmbientPad_2_TL.wav";
+  audioList[7] = "140_G_GranularAmbience_5_TL.wav";
   
-  audioList[8] = "";
-  audioList[9] = "";
-  audioList[10] = "";
-  audioList[11] = "";
+  audioList[8] = "100_Beat_5_TL.wav";
+  audioList[9] = "100_PercussionLoop_6_TL.wav";
+  audioList[10] = "110_Am_IntimateKeys_2_TL.wav";
+  audioList[11] = "Merged_CDG_9_CDG_10.wav";
   
   // Assign audio to SoundFile audio(1-12)
-  audio1 = new SoundFile(this, audioList[0]); 
-  audio2 = new SoundFile(this, audioList[1]); 
-  audio3 = new SoundFile(this, audioList[2]);
-  audio4 = new SoundFile(this, audioList[3]);
+  audio1 = new SoundFile(this, path + audioList[0]); 
+  audio2 = new SoundFile(this, path + audioList[1]); 
+  audio3 = new SoundFile(this, path + audioList[2]);
+  audio4 = new SoundFile(this, path + audioList[3]);
   
-  audio5 = new SoundFile(this, audioList[4]); 
-  audio6 = new SoundFile(this, audioList[5]); 
-  audio7 = new SoundFile(this, audioList[6]);
-  audio8 = new SoundFile(this, audioList[7]);
+  audio5 = new SoundFile(this, path + audioList[4]); 
+  audio6 = new SoundFile(this, path + audioList[5]); 
+  audio7 = new SoundFile(this, path + audioList[6]);
+  audio8 = new SoundFile(this, path + audioList[7]);
   
-  audio9 = new SoundFile(this, audioList[8]);
-  audio10 = new SoundFile(this, audioList[9]);
-  audio11 = new SoundFile(this, audioList[10]); 
-  audio12 = new SoundFile(this, audioList[11]);
+  audio9 = new SoundFile(this, path + audioList[8]);
+  audio10 = new SoundFile(this, path + audioList[9]);
+  audio11 = new SoundFile(this, path + audioList[10]); 
+  audio12 = new SoundFile(this, path + audioList[11]);
   
   // Assign welcome audio to appropriate SoundFile object
-  welcomeAudio = new SoundFile(this, "welcome_to_the_cube.wav");
+  welcomeAudio = new SoundFile(this, path + "welcome_to_the_cube.wav");
   
   // Assign amplitude objects to amp(1-12)
   amp1 = new Amplitude(this);  
@@ -2029,18 +2031,18 @@ void keyPressed() {
     randomizeList(numAudioTracks);
     //int rand = int(random(0, audioList.length));
     //println(rand);
-    audio1 = new SoundFile(this, audioList[randomNumList[0]]); // shuffle audio
-    audio2 = new SoundFile(this, audioList[randomNumList[1]]); 
-    audio3 = new SoundFile(this, audioList[randomNumList[2]]);
-    audio4 = new SoundFile(this, audioList[randomNumList[3]]);
-    audio5 = new SoundFile(this, audioList[randomNumList[4]]); 
-    audio6 = new SoundFile(this, audioList[randomNumList[5]]); 
-    audio7 = new SoundFile(this, audioList[randomNumList[6]]);
-    audio8 = new SoundFile(this, audioList[randomNumList[7]]);
-    audio9 = new SoundFile(this, audioList[randomNumList[8]]);
-    audio10 = new SoundFile(this, audioList[randomNumList[9]]);
-    audio11 = new SoundFile(this, audioList[randomNumList[10]]); 
-    audio12 = new SoundFile(this, audioList[randomNumList[11]]);
+    audio1 = new SoundFile(this, path + audioList[randomNumList[0]]); // shuffle audio
+    audio2 = new SoundFile(this, path + audioList[randomNumList[1]]); 
+    audio3 = new SoundFile(this, path + audioList[randomNumList[2]]);
+    audio4 = new SoundFile(this, path + audioList[randomNumList[3]]);
+    audio5 = new SoundFile(this, path + audioList[randomNumList[4]]); 
+    audio6 = new SoundFile(this, path + audioList[randomNumList[5]]); 
+    audio7 = new SoundFile(this, path + audioList[randomNumList[6]]);
+    audio8 = new SoundFile(this, path + audioList[randomNumList[7]]);
+    audio9 = new SoundFile(this, path + audioList[randomNumList[8]]);
+    audio10 = new SoundFile(this, path + audioList[randomNumList[9]]);
+    audio11 = new SoundFile(this, path + audioList[randomNumList[10]]); 
+    audio12 = new SoundFile(this, path + audioList[randomNumList[11]]);
     
     audio1.loop(); // loop audio
     audio2.loop();
@@ -2936,7 +2938,7 @@ void keyPressed() {
 }
 
 /*************************************************************************************
- MY CLASS
+ MY CLASSES
  *************************************************************************************/
 
 /**
