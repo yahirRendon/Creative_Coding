@@ -34,6 +34,19 @@ A gathering of various creative coding projects using Processing. Some are purel
   </a>
 </p>
 
+<p align="center">
+  <a href="https://github.com/yahirRendon/creative_coding/tree/main/processing/game_projects/find_mia/findMia.pde">
+    <img 
+      align="center" 
+      alt="find mia game"  
+      width="300" 
+      src="https://github.com/yahirRendon/creative_coding/blob/main/processing/game_projects/find_mia/data/find-mia.gif"
+    />
+  </a>
+</p>
+
+
+
 <!-- AUDIO PROJECTS -->
 <h3 align="center"><a href="https://github.com/yahirRendon/creative_coding/tree/main/processing/audio_projects">Audio Projects<a/></h3>
 
@@ -81,16 +94,14 @@ A gathering of various creative coding projects using Processing. Some are purel
       src="https://github.com/yahirRendon/creative_coding/blob/main/processing/audio_projects/image_reveal/data/image-reveal-amp.gif"
     />
   </a>
-  <!--
-  <a href="">
+  <a href="https://github.com/yahirRendon/creative_coding/tree/main/processing/audio_projects/the_hypercube">
     <img 
-      alt="image reveal projects"
+      alt="the cube project"
       width="300" 
       align="center" 
-      src=""
+      src="https://github.com/yahirRendon/creative_coding/blob/main/processing/audio_projects/the_hypercube/data/hypercube-main.gif"
     />
   </a>
-  -->
 </p>
 
 <!-- ARTISTIC PROJECTS -->
