@@ -1,4 +1,4 @@
-/**************************************************************
+/******************************************************************************
  Project:  Push and pull a singular vertex of a cube through
            various sounds scapes to create a unique audio
            experience.
@@ -18,7 +18,7 @@
  https://www.producerloops.com/Glitch-Samples-and-Glitch-Loops/
  Winter Glitch
                      
- **************************************************************/
+ ******************************************************************************/
 
 import processing.sound.*;
 
@@ -56,21 +56,21 @@ boolean showSoundSpace1, showSoundSpace2, showSoundSpace3, showSoundSpace4,
   showSoundSpace5, showSoundSpace6, showSoundSpace7, showSoundSpace8, 
   showSoundSpace9, showSoundSpace10, showSoundSpace11, showSoundSpace12; 
 
-PImage bckgrndImg;   // Create PImage object for background image
+PImage bckgrndImg;       // Create PImage object for background image
 
-float mX;            // Store and track mouseX position
-float mY;            // Store and track mouseY position
-boolean inRange;     // Check if mouseX/mouseY is inRange of Cube center vertex
-boolean showWire;    // Toggle wire frame view
-boolean showPulse;   // Toggle pulse analyzer view
+float mX;                // Store and track mouseX position
+float mY;                // Store and track mouseY position
+boolean inRange;         // Check if mouseX/mouseY is inRange of Cube center vertex
+boolean showWire;        // Toggle wire frame view
+boolean showPulse;       // Toggle pulse analyzer view
 
-boolean activateCube;  // Track first time through program
+boolean activateCube;    // Track first time through program
 
-float opacityL;      // Track Cube left side opacity
-float opacityT;      // Track Cube right side opacity
-float opacityR;      // Track Cube top opacity
-float opacityWF;     // Track wire frame opacity
-float opacityPulse;  // Track the pulse analyzer opacity
+float opacityL;          // Track Cube left side opacity
+float opacityT;          // Track Cube right side opacity
+float opacityR;          // Track Cube top opacity
+float opacityWF;         // Track wire frame opacity
+float opacityPulse;      // Track the pulse analyzer opacity
 
 boolean shiftPressed;    // Track if shift key has been pressed
 boolean ctrlPressed;     // Track if control key has been pressed
@@ -80,32 +80,34 @@ boolean rightPressed;    // Track if right key has been pressed
 boolean downPressed;
 
 boolean displayAudioSettings; // Toggle audio playing/mute display
-boolean timerEnd = false; // check if intro timer is done
-boolean introFadeDone = false;  // check if cube fade in is done
-boolean welcomeSoundDone = false; // Check if welcome sound is done
+boolean timerEnd; // check if intro timer is done
+boolean introFadeDone;  // check if cube fade in is done
+boolean welcomeSoundDone; // Check if welcome sound is done
 int audioTextStart;           // Start location of audio text display
 int pulseColor;           // Track pulse analyzer color
 int wireFrameColor;       // Track wire frame color
 
-int numAudioTracks = 12; // The number of audio tracks. Matches number of sound spaces
-String[] audioList = new String[numAudioTracks]; // List of audio track names
+int numAudioTracks; // The number of audio tracks. Matches number of sound spaces
+String[] audioList; // List of audio track names
 int[] randomNumList; // List for randomizing audio track order
 
-String tutorialText = "PRESS 'T' KEY FOR TUTORIAL"; // Inform user how to access tutorial mode
-float opacityTutText = 180; // Opacity for tutorial text
-boolean goToTutorialMode = false; //Begin animation to go to tutorial mode
-boolean goToUserMode = false; // Begin animation to go to user mode
-boolean startTutorialMode = false; // Tutorial mode start (no user control beyond esc)
-boolean startUserMode = true; // UserMode start (user in control)
-int tutorialCounter = 0;  // Track and move through tutorial steps
+String tutorialText; // Inform user how to access tutorial mode
+float opacityTutText; // Opacity for tutorial text
+boolean goToTutorialMode; //Begin animation to go to tutorial mode
+boolean goToUserMode; // Begin animation to go to user mode
+boolean startTutorialMode; // Tutorial mode start (no user control beyond esc)
+boolean startUserMode; // UserMode start (user in control)
+int tutorialCounter;  // Track and move through tutorial steps
 
-float opacityTutorialBkgrnd = 0; // Opacity for the tutorial rect overlay
-int xCubeToCenter = 0;  // Checks were current mX is and determines how to return to center
-int yCubeToCenter = 0;  // Check were current mY is and determines how to return to center
-boolean cubeCentered = false; // Checks if the Cube mX and mY is centered
-boolean canMoveNext = false; // Checks if user can move to next step in tutorial
+float opacityTutorialBkgrnd; // Opacity for the tutorial rect overlay
+int xCubeToCenter;  // Checks were current mX is and determines how to return to center
+int yCubeToCenter;  // Check were current mY is and determines how to return to center
+boolean cubeCentered; // Checks if the Cube mX and mY is centered
+boolean canMoveNext; // Checks if user can move to next step in tutorial
 
-String userModeTitleText = "THE CUBE"; // Title of the application
+String userModeTitleText; // Title of the application
+
+// tutorial text
 String tutorialModeTitleText = "TUTORIAL MODE"; // When in tutorial mode display text
 String tutorialText0 = "Welcome to The Cube tutorial.";
 String tutorialText0A = "Press the RIGHT arrow key\nto move through each step.\n\nPress the 'r' key to reset and\nexit the tutorial mode.";
@@ -129,7 +131,28 @@ String tutorialText11A = "Enjoy your stay at The Cube.";
  *************************************************************************************/
 void setup() {
   size(800, 800, FX2D);
+  cursor(HAND);
   bckgrndImg = loadImage("bckgrnd800.jpg");
+  
+  timerEnd = false; 
+  introFadeDone = false;  
+  welcomeSoundDone = false; 
+  numAudioTracks = 12; 
+  audioList = new String[numAudioTracks];
+  tutorialText = "PRESS 'T' KEY FOR TUTORIAL"; 
+  opacityTutText = 180; 
+  goToTutorialMode = false; 
+  goToUserMode = false; 
+  startTutorialMode = false;
+  startUserMode = true;
+  tutorialCounter = 0; 
+  opacityTutorialBkgrnd = 0;
+  xCubeToCenter = 0;
+  yCubeToCenter = 0;
+  cubeCentered = false;
+  canMoveNext = false;
+  userModeTitleText = "THE CUBE"; 
+
   
   //#Timer
   timer = new Timer();
@@ -280,7 +303,7 @@ void setup() {
   opacityWF = 0;      // Start wire frame opacity
   opacityPulse = 100; // Start pulse analyzer opacity
   
-  delay(2000);
+  //delay(1000);
 }
 
 /*************************************************************************************
@@ -1829,6 +1852,9 @@ void resetSettings() {
 
 /**
  * Check which key is pressed and do action
+ * KEY 'T' | tutorial mode
+ 
+ *
  **/
 void keyPressed() {
   //#TUT
