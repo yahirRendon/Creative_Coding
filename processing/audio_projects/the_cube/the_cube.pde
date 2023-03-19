@@ -10,26 +10,37 @@
           - Processing 3.5.4
           
  Instructions:
-
- Background Photo by Dani Aláez on Unsplash
- https://unsplash.com/photos/Pimi_9akwIs
-
- Sound sample from:
- https://www.producerloops.com/Glitch-Samples-and-Glitch-Loops/
- Winter Glitch
+ - T KEY      | toggle tutorial mode
+ - R KEY      | reset cube
+ - A KEY      | auto play
+ - SPACE KEY  | toggle user mode
+ - W KEY      | wire frame mode
+ - SHFT + W   | cycle wire frame colors
+ - P KEY      | pulse analyzer mode
+ - SHFT + P   | cycle pulse colors
+ - LEFT ARROW  | mute sounds 1-4
+ - UP ARROW    | mute sounds 5-8
+ - DOWN ARROW  | mute sounds 9-12 
+ - NUM 1-0, -, =    | mute sounds 1-9 (0:10 | -:11 | =:12) 
+ - SHFT + 1-0, -, = | solo sounds 1-9 (0:10 | -:11 | =:12)
+ 
+ Samples by Yahir
+ 
+ Background Photo by: 
+ Ethan Robertson on Unsplash
+ https://unsplash.com/photos/QKNCzQtP3Ig
                      
  ******************************************************************************/
-
+ 
 import processing.sound.*;
 
 Timer timer;
 
 //Decalare audio object
-String path;         // path to audio files
 SoundFile audio1, audio2, audio3, audio4, 
   audio5, audio6, audio7, audio8, 
   audio9, audio10, audio11, audio12, welcomeAudio; 
-  
+
 // Delcare amplitude object
 Amplitude amp1, amp2, amp3, amp4, amp5, amp6, 
   amp7, amp8, amp9, amp10, amp11, amp12; 
@@ -38,7 +49,14 @@ Amplitude amp1, amp2, amp3, amp4, amp5, amp6,
 float amplitude1, amplitude2, amplitude3, amplitude4, 
   amplitude5, amplitude6, amplitude7, amplitude8, 
   amplitude9, amplitude10, amplitude11, amplitude12; 
-  
+
+PImage bckgrndImg;           // Create PImage object for background image
+float mX;                    // Store and track mouseX position
+float mY;                    // Store and track mouseY position
+boolean inRange;             // Check if mouseX/mouseY is inRange of Cube center vertex
+boolean showWire;            // Toggle wire frame view
+boolean showPulse;           // Toggle pulse analyzer view
+
 // Toggle individual mutes
 boolean mute1, mute2, mute3, mute4, 
   mute5, mute6, mute7, mute8, 
@@ -52,63 +70,60 @@ boolean solo1, solo2, solo3, solo4,
 // Toggle mute groups
 boolean muteGroup1, muteGroup2, muteGroup3;  
 
+boolean activateCube;        // Track first time through program
+float opacityL;              // Track Cube left side opacity
+float opacityT;              // Track Cube right side opacity
+float opacityR;              // Track Cube top opacity
+float opacityWF;             // Track wire frame opacity
+float opacityPulse;          // Track the pulse analyzer opacity
+
 // Toggle show sound spaces
 boolean showSoundSpace1, showSoundSpace2, showSoundSpace3, showSoundSpace4, 
   showSoundSpace5, showSoundSpace6, showSoundSpace7, showSoundSpace8, 
   showSoundSpace9, showSoundSpace10, showSoundSpace11, showSoundSpace12; 
 
-PImage bckgrndImg;       // Create PImage object for background image
-
-float mX;                // Store and track mouseX position
-float mY;                // Store and track mouseY position
-boolean inRange;         // Check if mouseX/mouseY is inRange of Cube center vertex
-boolean showWire;        // Toggle wire frame view
-boolean showPulse;       // Toggle pulse analyzer view
-
-boolean activateCube;    // Track first time through program
-
-float opacityL;          // Track Cube left side opacity
-float opacityT;          // Track Cube right side opacity
-float opacityR;          // Track Cube top opacity
-float opacityWF;         // Track wire frame opacity
-float opacityPulse;      // Track the pulse analyzer opacity
-
-boolean shiftPressed;    // Track if shift key has been pressed
-boolean ctrlPressed;     // Track if control key has been pressed
-boolean leftPressed;     // Track if left key has been pressed
-boolean upPressed;       // Track if up key has been pressed
-boolean rightPressed;    // Track if right key has been pressed
-boolean downPressed;
+boolean shiftPressed;        // Track if shift key has been pressed
+boolean ctrlPressed;         // Track if control key has been pressed
+boolean leftPressed;         // Track if left key has been pressed
+boolean upPressed;           // Track if up key has been pressed
+boolean rightPressed;        // Track if right key has been pressed
+boolean downPressed;         // Track if down key has been pressed
 
 boolean displayAudioSettings; // Toggle audio playing/mute display
-boolean timerEnd; // check if intro timer is done
-boolean introFadeDone;  // check if cube fade in is done
-boolean welcomeSoundDone; // Check if welcome sound is done
+boolean timerEnd;             // check if intro timer is done
+boolean introFadeDone;        // check if cube fade in is done
+boolean welcomeSoundDone;     // Check if welcome sound is done
 int audioTextStart;           // Start location of audio text display
-int pulseColor;           // Track pulse analyzer color
-int wireFrameColor;       // Track wire frame color
+int pulseColor;               // Track pulse analyzer color
+int wireFrameColor;           // Track wire frame color
+int numAudioTracks;           // The number of audio tracks. Matches number of sound spaces
+String[] audioList;           // List of audio track names
+int[] randomNumList;          // List for randomizing audio track order
+String tutorialText;          // Inform user how to access tutorial mode
+float opacityTutText;         // Opacity for tutorial text
+boolean goToTutorialMode;     //Begin animation to go to tutorial mode
+boolean goToUserMode;         // Begin animation to go to user mode
+boolean startTutorialMode;    // Tutorial mode start (no user control beyond esc)
+boolean startUserMode;        // UserMode start (user in control)
+int tutorialCounter;          // Track and move through tutorial steps
 
-int numAudioTracks; // The number of audio tracks. Matches number of sound spaces
-String[] audioList; // List of audio track names
-int[] randomNumList; // List for randomizing audio track order
+float opacityTutorialBkgrnd;  // Opacity for the tutorial rect overlay
+int xCubeToCenter;            // Checks were current mX is and determines how to return to center
+int yCubeToCenter;            // Check were current mY is and determines how to return to center
+boolean cubeCentered;         // Checks if the Cube mX and mY is centered
+boolean canMoveNext;          // Checks if user can move to next step in tutorial
 
-String tutorialText; // Inform user how to access tutorial mode
-float opacityTutText; // Opacity for tutorial text
-boolean goToTutorialMode; //Begin animation to go to tutorial mode
-boolean goToUserMode; // Begin animation to go to user mode
-boolean startTutorialMode; // Tutorial mode start (no user control beyond esc)
-boolean startUserMode; // UserMode start (user in control)
-int tutorialCounter;  // Track and move through tutorial steps
+boolean autoPlay;             // Toggle auto play mode
+float targetX;                // Initial start value of the targetX in auto play mode
+float targetY;                // Initial start value of the targetX in auto play mode
+float easing;                 // Easing speed for moving towards targetX/targetY
+double prior;                 // If using time to in autoplay. Disabled and replaced by noise()
+double playTime;              // If using time in auto play mode. Disabled and replaced by noise()
+float xOff;                   // Offest value for mX value of noise()
+float yOff;                   // Offset value for mY value of noise()
 
-float opacityTutorialBkgrnd; // Opacity for the tutorial rect overlay
-int xCubeToCenter;  // Checks were current mX is and determines how to return to center
-int yCubeToCenter;  // Check were current mY is and determines how to return to center
-boolean cubeCentered; // Checks if the Cube mX and mY is centered
-boolean canMoveNext; // Checks if user can move to next step in tutorial
-
-String userModeTitleText; // Title of the application
-
-// tutorial text
+// for tutorial elements
+String userModeTitleText = "THE CUBE"; // Title of the application
 String tutorialModeTitleText = "TUTORIAL MODE"; // When in tutorial mode display text
 String tutorialText0 = "Welcome to The Cube tutorial.";
 String tutorialText0A = "Press the RIGHT arrow key\nto move through each step.\n\nPress the 'r' key to reset and\nexit the tutorial mode.";
@@ -126,73 +141,70 @@ String tutorialText10 = "Pressing KEY 'p' toggles\nthe pulse audio analyzer.\n\n
 String tutorialText11 = "Pressing RIGHT arrow key will restart tutorial.\nPressing KEY 'r' will reset and end the tutorial.";
 String tutorialText11A = "Enjoy your stay at The Cube.";
 
-
 /*************************************************************************************
  SETUP
  *************************************************************************************/
 void setup() {
   size(800, 800, FX2D);
+  bckgrndImg = loadImage(IMAGE);
   //cursor(HAND);
-  bckgrndImg = loadImage("../#data/bckgrnd800.jpg");
   
-  timerEnd = false; 
-  introFadeDone = false;  
-  welcomeSoundDone = false; 
+  timerEnd = false;
+  introFadeDone = false;
+  welcomeSoundDone = false;
   numAudioTracks = 12; 
-  audioList = new String[numAudioTracks];
+  audioList = new String[numAudioTracks]; 
   tutorialText = "PRESS 'T' KEY FOR TUTORIAL"; 
   opacityTutText = 180; 
   goToTutorialMode = false; 
-  goToUserMode = false; 
+  goToUserMode = false;
   startTutorialMode = false;
   startUserMode = true;
-  tutorialCounter = 0; 
+  tutorialCounter = 0;
   opacityTutorialBkgrnd = 0;
-  xCubeToCenter = 0;
-  yCubeToCenter = 0;
-  cubeCentered = false;
+  xCubeToCenter = 0; 
+  yCubeToCenter = 0; 
+  cubeCentered = false; 
   canMoveNext = false;
-  userModeTitleText = "THE CUBE"; 
 
   
   //#Timer
   timer = new Timer();
   
-  path = "../#data/winter/";
   // Assign audio track label to list audioList
-  audioList[0] = "";
-  audioList[1] = "";
-  audioList[2] = "";
-  audioList[3] = "";
+  audioList[0] = "SOUND";       //1
+  audioList[1] = "SOUND";       //2
+  audioList[2] = "SOUND";       //3
+  audioList[3] = "SOUND";       //4
   
-  audioList[4] = "";
-  audioList[5] = "";
-  audioList[6] = "";
-  audioList[7] = "";
+  audioList[4] = "SOUND";       //5
+  audioList[5] = "SOUND";       //6
+  audioList[6] = "SOUND";       //7
+  audioList[7] = "SOUND";       //8
   
-  audioList[8] = "";
-  audioList[9] = "";
-  audioList[10] = "";
-  audioList[11] = "";
+  audioList[8] = "SOUND";       //9
+  audioList[9] = "SOUND";       //10
+  audioList[10] = "SOUND";      //11
+  audioList[11] = "SOUND";      //12
   
   // Assign audio to SoundFile audio(1-12)
-  audio1 = new SoundFile(this, path + audioList[0]); 
-  audio2 = new SoundFile(this, path + audioList[1]); 
-  audio3 = new SoundFile(this, path + audioList[2]);
-  audio4 = new SoundFile(this, path + audioList[3]);
+  audio1 = new SoundFile(this, audioList[0]); 
+  audio2 = new SoundFile(this, audioList[1]); 
+  audio3 = new SoundFile(this, audioList[2]);
+  audio4 = new SoundFile(this, audioList[3]);
   
-  audio5 = new SoundFile(this, path + audioList[4]); 
-  audio6 = new SoundFile(this, path + audioList[5]); 
-  audio7 = new SoundFile(this, path + audioList[6]);
-  audio8 = new SoundFile(this, path + audioList[7]);
+  audio5 = new SoundFile(this, audioList[4]); 
+  audio6 = new SoundFile(this, audioList[5]); 
+  audio7 = new SoundFile(this, audioList[6]);
+  audio8 = new SoundFile(this, audioList[7]);
   
-  audio9 = new SoundFile(this, path + audioList[8]);
-  audio10 = new SoundFile(this, path + audioList[9]);
-  audio11 = new SoundFile(this, path + audioList[10]); 
-  audio12 = new SoundFile(this, path + audioList[11]);
+  audio9 = new SoundFile(this, audioList[8]);
+  audio10 = new SoundFile(this, audioList[9]);
+  audio11 = new SoundFile(this, audioList[10]); 
+  audio12 = new SoundFile(this, audioList[11]);
   
   // Assign welcome audio to appropriate SoundFile object
-  welcomeAudio = new SoundFile(this, path + "welcome_to_the_cube.wav");
+  welcomeAudio = new SoundFile(this, "welcome_to_the_cube.wav");
   
   // Assign amplitude objects to amp(1-12)
   amp1 = new Amplitude(this);  
@@ -295,7 +307,7 @@ void setup() {
   rightPressed = false; // right arrow key not pressed on start
   downPressed = false;  // #FIX do i use this? 
   displayAudioSettings = false; // No audio settings displayed to start
-  //audioTextStart = 140;         // Audio text width start location is 140
+  audioTextStart = 140;         // Audio text width start location is 140
   pulseColor = 0;               // Start pulse color at 0
   wireFrameColor = 0;           // Start wire frame color 0
 
@@ -305,14 +317,22 @@ void setup() {
   opacityWF = 0;      // Start wire frame opacity
   opacityPulse = 100; // Start pulse analyzer opacity
   
-  //delay(1000);
+  autoPlay = false; // Auto play is set to off
+  targetX = 400; // Initial start value of the targetX in auto play mode
+  targetY = 610; // Initial start value of the targetX in auto play mode
+  easing = 0.01; // Easing speed for moving towards targetX/targetY
+  prior = 0; // If using time to in autoplay. Disabled and replaced by noise()
+  playTime = 0; // If using time in auto play mode. Disabled and replaced by noise()
+  xOff = 0; // Offest value for mX value of noise()
+  yOff = 1216; // Offset value for mY value of noise()
+  
 }
 
 /*************************************************************************************
  DRAW
  *************************************************************************************/
 void draw() {
-  image(bckgrndImg, 0, 0);
+  image(bckgrndImg, -120, 0);
   
   // Play welcome to The Cube sound on first run
   //if(!welcomeSoundDone) {
@@ -368,6 +388,8 @@ void draw() {
      startUserMode = true; 
     }
   }
+  
+  
   // Update the amplitude of audio(1-12) based on amplitude(1-12) variable
   audio1.amp(amplitude1); 
   audio2.amp(amplitude2);
@@ -431,6 +453,49 @@ void draw() {
   // consistent to distance from center vertex
   cubeDisplay();
   
+  if(autoPlay) {
+  //  playTime = millis()-prior;
+  //if(millis() > prior + 10000){
+  //    prior = millis();
+  //  // do something every 5 seconds 
+  //  targetX = int(random(0, width));
+  //    targetY = int(random(0, height));
+  //}
+  
+
+    if(!activateCube) {
+      audio1.loop(); //Loop songOne
+      audio2.loop();
+      audio3.loop();
+      audio4.loop();
+      audio5.loop(); 
+      audio6.loop();
+      audio7.loop();
+      audio8.loop();
+      audio9.loop();
+      audio10.loop();
+      audio11.loop();
+      audio12.loop();
+      activateCube = true;
+    }
+    //if(abs(dist(mX, mY, targetX, targetY)) < 3) {
+      //targetX = int(random(0, width));
+      //targetY = int(random(0, height));
+      xOff += .001;
+      yOff += .001;
+      targetX = noise(xOff) * width;
+      targetY = noise(yOff) * height;
+    //}
+    //targetX = width/2;
+  float dx = targetX - mX;
+  mX += dx * easing;
+   
+   //targetY = height/2;
+  float dy = targetY - mY;
+  mY += dy * easing;
+  updateAmplitudes();
+  }
+  
   // Toggle wireframe view show/hide
   if (showWire) {
     displayWireFrame();
@@ -442,7 +507,6 @@ void draw() {
   }
   
   // Display THE CUBE title text and format
-  
   if(startUserMode) {
     displayTitleText(userModeTitleText, 26); 
   } else if(startTutorialMode) {
@@ -506,7 +570,7 @@ void draw() {
         
         case 2: // Explore sounds
         displayTutorialText(tutorialText2, 400, 240, 2);
-        stroke(255, 0 , 0);
+        stroke(255, 0, 0);
         noFill();
         strokeWeight(1);
         ellipse(mX, mY, 30, 30);
@@ -531,7 +595,7 @@ void draw() {
           displayTutorialText(tutorialText2, 400, 240, 2);
         }
         // Red circle on vertex
-        stroke(255, 0 , 0);
+        stroke(255, 0, 0);
         noFill();
         strokeWeight(1);
         ellipse(mX, mY, 30, 30);
@@ -576,7 +640,7 @@ void draw() {
          canMoveNext = true;
         } 
         // Red circle around vertex
-        stroke(255, 0 , 0);
+        stroke(255, 0, 0);
         noFill();
         strokeWeight(1);
         ellipse(mX, mY, 30, 30);
@@ -647,7 +711,7 @@ void draw() {
           stroke(255, 0 , 0);
           noFill();
           strokeWeight(1);
-          ellipse(295, 775, 30, 30);
+          ellipse(285, 775, 30, 30);
           canMoveNext = true;
         }
         
@@ -692,7 +756,7 @@ void draw() {
         strokeWeight(1);
         ellipse(mX, mY, 30, 30);
         // Red solo circle
-        ellipse(295, 775, 30, 30);
+        ellipse(285, 775, 30, 30);
         canMoveNext = true;
         break;
 
@@ -734,7 +798,7 @@ void draw() {
         strokeWeight(1);
         ellipse(mX, mY, 30, 30);
         // Red solo circle
-        rect(130, 740, 180, 50);
+        rect(130, 740, 170, 50);
         }
         // Red circle around vertex
         stroke(255, 0 , 0);
@@ -892,14 +956,28 @@ float mapAudioAmp(float mMap, int mSize, float tX, float tY) {
  **/
 void soundSpaceDisplay(int mSize, float tX, float tY, int num) {
   noStroke();
-  fill(48, 94, 47, 50);
+  if(num < 5) {
+    fill(39, 83, 95, 50);
+  } else if( num < 9) {
+    fill(153, 125, 60, 50);
+  } else if(num < 13) {
+    fill(153, 73, 60, 50);
+  }
+  
   ellipse(tX + (mSize / 2), tY + (mSize / 2), mSize, mSize);
-  fill(48, 94, 47, 200);
+  if(num < 5) {
+    fill(39, 83, 95, 200);
+  } else if( num < 9) {
+    fill(153, 125, 60, 200);
+  } else if(num < 13) {
+    fill(153, 73, 60, 200);
+  }
   ellipse(tX + (mSize / 2), tY + (mSize / 2), 20, 20);
   textAlign(CENTER, CENTER);
   textSize(10);
   fill(255);
   text(num, tX + (mSize / 2), tY + (mSize / 2));
+  textAlign(LEFT);
 }
 
 /**
@@ -918,7 +996,7 @@ void cubeDisplay() {
    ----------------D----------------------   
    **/
   // Cube dark-green left side
-  fill(74, 112, 122, opacityL);
+  fill(39, 83, 95, opacityL);
   beginShape();
   vertex(mX, mY);    // A
   vertex(200, 260);  // B
@@ -927,7 +1005,7 @@ void cubeDisplay() {
   vertex(mX, mY);    // A
   endShape();
   // Cube medium-green top
-  fill(148, 176, 183, opacityT);
+  fill(153, 125, 60, opacityT);
   beginShape();
   vertex(mX, mY);    // A
   vertex(200, 260);  // B
@@ -936,7 +1014,7 @@ void cubeDisplay() {
   vertex(mX, mY);    // A
   endShape();
   // Cube gray right side
-  fill(194, 200, 197, opacityR);
+  fill(153, 73, 60, opacityR);
   beginShape();
   vertex(mX, mY);    // A
   vertex(600, 260);  // F
@@ -952,16 +1030,16 @@ void cubeDisplay() {
 void displayWireFrame() {
   switch(wireFrameColor) {
   case 1:
-    stroke(108, 0, 232, opacityWF);
+    stroke(83, 60, 7, opacityWF);
     break;
   case 2:
-    stroke(48, 94, 47, opacityWF);
+    stroke(5, 61, 22, opacityWF);
     break;
   case 3:
-    stroke(120, opacityWF);
+    stroke(255, opacityWF);
     break;
   default:
-    stroke(8, 24, 110, opacityWF);
+    stroke(11, 20, 56, opacityWF);
     break;
   }
 
@@ -1080,7 +1158,7 @@ void pulseAnalyzerSolo(Amplitude  mAmp, float mPulseAmt, int mStrkWhgt, int mR, 
  **/
 void displayTutorialText(String stepText, int sX, int sY, int tAlign) {
   textSize(14);
-  fill(108, 0, 232, 200);
+  fill(255);
   switch(tAlign) {
    case 1:
    textAlign(RIGHT);
@@ -1107,6 +1185,7 @@ void displayTutorialText(String stepText, int sX, int sY, int tAlign) {
 void displayTutorialOptionText(int sX, int sY, int fontSize) {
   //#TUTORIAL
   textSize(fontSize);
+  fill(255);
   text(tutorialText, sX - (textWidth(tutorialText)/2), sY);
 }
 
@@ -1117,13 +1196,12 @@ void displayTutorialOptionText(int sX, int sY, int fontSize) {
  * @PARAM fontSize: int font size of the text
  **/
 void displayTitleText(String tText, int fontSize) {
-  
   if(startUserMode) {
   fill(200, 200 - (opacityWF * 1.5));
   } else if(startTutorialMode) {
-    fill(108, 0, 232, 200);
+    fill(255);
   }
-  textAlign(LEFT);
+    
   textSize(fontSize);
   text(tText, (400 - (textWidth(tText)/2)), 100);
 }
@@ -1137,57 +1215,56 @@ void displayTitleText(String tText, int fontSize) {
 void displayAudioStatusText(int fontSize) {
   //AUDIO TEXT START AND FORMAT
   textSize(fontSize);
-  textAlign(LEFT);
     audioTextStart = 140;
-    fill(200);
+    fill(255);
     if (mute1) {
-      text("AUDIO 01: M", audioTextStart, 760);
+      text("AUDIO 1: M", audioTextStart, 760);
     } else {
-      audioPlayingText("AUDIO 01: ", audioTextStart, 760);
+      audioPlayingText("AUDIO 1: ", audioTextStart, 760);
     }
     if (mute2) {
-      text("AUDIO 02: M", audioTextStart, 780);
+      text("AUDIO 2: M", audioTextStart, 780);
     } else {
-      audioPlayingText("AUDIO 02: ", audioTextStart, 780);
+      audioPlayingText("AUDIO 2: ", audioTextStart, 780);
     }
     audioTextStart += 90;
     if (mute3) {
-      text("AUDIO 03: M", audioTextStart, 760);
+      text("AUDIO 3: M", audioTextStart, 760);
     } else {
-      audioPlayingText("AUDIO 03: ", audioTextStart, 760);
+      audioPlayingText("AUDIO 3: ", audioTextStart, 760);
     }
     if (mute4) {
-      text("AUDIO 04: M", audioTextStart, 780);
+      text("AUDIO 4: M", audioTextStart, 780);
     } else { 
-      audioPlayingText("AUDIO 04: ", audioTextStart, 780);
+      audioPlayingText("AUDIO 4: ", audioTextStart, 780);
     }
     audioTextStart += 100;
     if (mute5) {
-      text("AUDIO 05: M", audioTextStart, 760);
+      text("AUDIO 5: M", audioTextStart, 760);
     } else { 
-      audioPlayingText("AUDIO 05: ", audioTextStart, 760);
+      audioPlayingText("AUDIO 5: ", audioTextStart, 760);
     }
     if (mute6) {
-      text("AUDIO 06: M", audioTextStart, 780);
+      text("AUDIO 6: M", audioTextStart, 780);
     } else { 
-      audioPlayingText("AUDIO 06: ", audioTextStart, 780);
+      audioPlayingText("AUDIO 6: ", audioTextStart, 780);
     }
     audioTextStart += 90;
     if (mute7) {
-      text("AUDIO 07: M", audioTextStart, 760);
+      text("AUDIO 7: M", audioTextStart, 760);
     } else {
-      audioPlayingText("AUDIO 07: ", audioTextStart, 760);
+      audioPlayingText("AUDIO 7: ", audioTextStart, 760);
     }
     if (mute8) {
-      text("AUDIO 08: M", audioTextStart, 780);
+      text("AUDIO 8: M", audioTextStart, 780);
     } else {
-      audioPlayingText("AUDIO 08: ", audioTextStart, 780);
+      audioPlayingText("AUDIO 8: ", audioTextStart, 780);
     }
     audioTextStart += 100;
     if (mute9) {
-      text("AUDIO 09: M", audioTextStart, 760);
+      text("AUDIO 9: M", audioTextStart, 760);
     } else {
-      audioPlayingText("AUDIO 09: ", audioTextStart, 760);
+      audioPlayingText("AUDIO 9: ", audioTextStart, 760);
     }
     if (mute10) {
       text("AUDIO 10: M", audioTextStart, 780);
@@ -1205,7 +1282,6 @@ void displayAudioStatusText(int fontSize) {
     } else { 
       audioPlayingText("AUDIO 12: ", audioTextStart, 780);
     }
-    
 }
 
 /**
@@ -1219,25 +1295,25 @@ void displayPulseAnalyzer() {
       pulseAnalyzerAll(amp1, amp2, amp3, amp4, 
         amp5, amp6, amp7, amp8, 
         amp9, amp10, amp11, amp12, 
-        200, 2, 108, 0, 232, opacityPulse); // Rya Purple
+        200, 2, 83, 60, 7, opacityPulse); // Rya Purple
       break;
     case 2:
       pulseAnalyzerAll(amp1, amp2, amp3, amp4, 
         amp5, amp6, amp7, amp8, 
         amp9, amp10, amp11, amp12, 
-        200, 2, 48, 94, 47, opacityPulse); // Rya Green
+        200, 2, 5, 61, 22, opacityPulse); // Rya Green
       break;
     case 3:
       pulseAnalyzerAll(amp1, amp2, amp3, amp4, 
         amp5, amp6, amp7, amp8, 
         amp9, amp10, amp11, amp12, 
-        200, 2, 120, 120, 120, opacityPulse); // Gray
+        200, 2, 255, 255, 255, opacityPulse); // Gray
       break;
     default:
       pulseAnalyzerAll(amp1, amp2, amp3, amp4, 
         amp5, amp6, amp7, amp8, 
         amp9, amp10, amp11, amp12, 
-        200, 2, 8, 24, 110, opacityPulse); // Rya Blue
+        200, 2, 6, 41, 51, opacityPulse); // Rya Blue
       break;
     } 
 }
@@ -1260,25 +1336,25 @@ void displaySoundSpace() {
     soundSpaceDisplay(600, 400, 400, 4); // 4
   }
   if (showSoundSpace5) {
-    soundSpaceDisplay(600, -300, 100, 5); // 5
+    soundSpaceDisplay(700, -300, 50, 5); // 5
   }
   if (showSoundSpace6) {
-    soundSpaceDisplay(600, 100, -300, 6); // 6
+    soundSpaceDisplay(700, 50, -300, 6); // 6
   }
   if (showSoundSpace7) {
-    soundSpaceDisplay(600, 500, 100, 7); // 7
+    soundSpaceDisplay(700, 400, 50, 7); // 7
   }
   if (showSoundSpace8) {
-    soundSpaceDisplay(600, 100, 500, 8); // 8
+    soundSpaceDisplay(700, 50, 400, 8); // 8
   }
   if (showSoundSpace9) {
-    soundSpaceDisplay(400, 0, 160, 9); // 9
+    soundSpaceDisplay(500, -50, 210, 9); // 9
   }
   if (showSoundSpace10) {
     soundSpaceDisplay(400, 200, -40, 10); // 10
   }
   if (showSoundSpace11) {
-    soundSpaceDisplay(400, 400, 160, 11); // 11
+    soundSpaceDisplay(500, 350, 210, 11); // 11
   }
   if (showSoundSpace12) {
     soundSpaceDisplay(500, 150, 360, 12); // 12
@@ -1295,12 +1371,12 @@ void displaySoundSpace() {
  **/
 void audioPlayingText(String tAudio, int tX, float tY) {
   noStroke();
-  fill(200);
+  fill(255);
   beginShape(); // Play
-  vertex(tX + 65, tY - 8);
-  vertex(tX + 65, tY + 2);
-  vertex(tX + 70, tY - 3);
-  vertex(tX + 65, tY - 8);
+  vertex(tX + 58, tY - 8);
+  vertex(tX + 58, tY + 2);
+  vertex(tX + 63, tY - 3);
+  vertex(tX + 58, tY - 8);
   endShape();
   text(tAudio, tX, tY);
 }
@@ -1334,11 +1410,11 @@ void randomizeList(int listLen) {
  **/
 void updateAmplitudes() {
   // Update opacity values
-    opacityL = map(mX, 100, width, 200, 10);
-    opacityT = map(mY, 100, height, 200, 10);
-    opacityR = map(mX, 100, width, 10, 200);
-    opacityWF = map(abs(dist(mX, mY, 400, 360)), 0, width, 0, 200);
-    opacityPulse = map(abs(dist(mX, mY, 400, 360)), 0, width, 100, 5);
+    opacityL = map(mX, 100, width, 230, 50);
+    opacityT = map(mY, 100, height, 230, 50);
+    opacityR = map(mX, 100, width, 50, 230);
+    opacityWF = map(abs(dist(mX, mY, 400, 360)), 0, width, 5, 255);
+    opacityPulse = map(abs(dist(mX, mY, 400, 360)), 0, width, 255, 5);
 
     if (muteGroup1) {
       //amplitude1 = mapAudioAmp(amplitude1, 600, -200, -200);
@@ -1389,10 +1465,10 @@ void updateAmplitudes() {
       if (!mute8) {
         mute8 = false;
       }
-      amplitude5 = mapAudioAmp(amplitude5, 600, -300, 100);
-      amplitude6 = mapAudioAmp(amplitude6, 600, 100, -300);
-      amplitude7 = mapAudioAmp(amplitude7, 600, 500, 100);
-      amplitude8 = mapAudioAmp(amplitude8, 600, 100, 500);
+      amplitude5 = mapAudioAmp(amplitude5, 700, -300, 50);
+      amplitude6 = mapAudioAmp(amplitude6, 700, 50, -300);
+      amplitude7 = mapAudioAmp(amplitude7, 700, 400, 50);
+      amplitude8 = mapAudioAmp(amplitude8, 700, 50, 400);
     }
 
     if (muteGroup3) {
@@ -1417,9 +1493,9 @@ void updateAmplitudes() {
       if (!mute12) {
         mute12 = false;
       }
-      amplitude9 = mapAudioAmp(amplitude9, 400, 0, 160);
+      amplitude9 = mapAudioAmp(amplitude9, 500, -50, 210);
       amplitude10 = mapAudioAmp(amplitude10, 400, 200, -40);
-      amplitude11 = mapAudioAmp(amplitude11, 400, 400, 160);     
+      amplitude11 = mapAudioAmp(amplitude11, 500, 350, 210);     
       amplitude12 = mapAudioAmp(amplitude12, 500, 150, 360);
     }
 
@@ -1446,27 +1522,27 @@ void updateAmplitudes() {
       amplitude4 = 0;
     }
     if (!mute5) {
-      amplitude5 = mapAudioAmp(amplitude5, 600, -300, 100);
+      amplitude5 = mapAudioAmp(amplitude5, 700, -300, 50);
     } else {
       amplitude5 = 0;
     }
     if (!mute6) {
-      amplitude6 = mapAudioAmp(amplitude6, 600, 100, -300);
+      amplitude6 = mapAudioAmp(amplitude6, 700, 50, -300);
     } else {
       amplitude6 = 0;
     }
     if (!mute7) {
-      amplitude7 = mapAudioAmp(amplitude7, 600, 500, 100);
+      amplitude7 = mapAudioAmp(amplitude7, 700, 400, 50);
     } else {
       amplitude7 = 0;
     }
     if (!mute8) {
-      amplitude8 = mapAudioAmp(amplitude8, 600, 100, 500);
+      amplitude8 = mapAudioAmp(amplitude8, 700, 50, 400);
     } else {
       amplitude8 = 0;
     }
     if (!mute9) {
-      amplitude9 = mapAudioAmp(amplitude9, 400, 0, 160);
+      amplitude9 = mapAudioAmp(amplitude9, 500, -50, 210);
     } else {
       amplitude9 = 0;
     }
@@ -1476,7 +1552,7 @@ void updateAmplitudes() {
       amplitude10 = 0;
     }
     if (!mute11) {
-      amplitude11 = mapAudioAmp(amplitude11, 400, 400, 160);
+      amplitude11 = mapAudioAmp(amplitude11, 500, 350, 210);
     } else {
       amplitude11 = 0;
     }
@@ -1511,9 +1587,22 @@ void updateAmplitudes() {
       mute10 = true;
       mute11 = true;
       mute12 = true;
-    }
+    } 
+    //else {
+    //  mute2 = false;
+    //  mute3 = false;
+    //  mute4 = false;
+    //  mute5 = false;
+    //  mute6 = false;
+    //  mute7 = false;
+    //  mute8 = false;
+    //  mute9 = false;
+    //  mute10 = false;
+    //  mute11 = false;
+    //  mute12 = false;
+    //}
 
-    if (solo2) {
+    else if (solo2) {
       amplitude1 = 0.0;
       amplitude2 = mapAudioAmp(amplitude2, 600, 400, -200);
       amplitude3 = 0.0;
@@ -1526,8 +1615,34 @@ void updateAmplitudes() {
       amplitude10 = 0.0;
       amplitude11 = 0.0;
       amplitude12 = 0.0;
-    }
-    if (solo3) {
+      
+      mute1 = true;
+      mute3 = true;
+      mute4 = true;
+      mute5 = true;
+      mute6 = true;
+      mute7 = true;
+      mute8 = true;
+      mute9 = true;
+      mute10 = true;
+      mute11 = true;
+      mute12 = true;
+    } 
+    //else {
+    //  mute1 = false;
+    //  mute3 = false;
+    //  mute4 = false;
+    //  mute5 = false;
+    //  mute6 = false;
+    //  mute7 = false;
+    //  mute8 = false;
+    //  mute9 = false;
+    //  mute10 = false;
+    //  mute11 = false;
+    //  mute12 = false;
+    //}
+    
+    else if (solo3) {
       amplitude1 = 0.0;
       amplitude2 = 0.0;
       amplitude3 = mapAudioAmp(amplitude3, 600, -200, 400);
@@ -1540,8 +1655,33 @@ void updateAmplitudes() {
       amplitude10 = 0.0;
       amplitude11 = 0.0;
       amplitude12 = 0.0;
-    }
-    if (solo4) {
+      mute2 = true;
+      mute1 = true;
+      mute4 = true;
+      mute5 = true;
+      mute6 = true;
+      mute7 = true;
+      mute8 = true;
+      mute9 = true;
+      mute10 = true;
+      mute11 = true;
+      mute12 = true;
+    } 
+    //else {
+    //  mute2 = false;
+    //  mute1 = false;
+    //  mute4 = false;
+    //  mute5 = false;
+    //  mute6 = false;
+    //  mute7 = false;
+    //  mute8 = false;
+    //  mute9 = false;
+    //  mute10 = false;
+    //  mute11 = false;
+    //  mute12 = false;
+    //}
+    
+    else if (solo4) {
       amplitude1 = 0.0;
       amplitude2 = 0.0;
       amplitude3 = 0.0;
@@ -1554,13 +1694,38 @@ void updateAmplitudes() {
       amplitude10 = 0.0;
       amplitude11 = 0.0;
       amplitude12 = 0.0;
-    }
-    if (solo5) {
+      mute2 = true;
+      mute3 = true;
+      mute1 = true;
+      mute5 = true;
+      mute6 = true;
+      mute7 = true;
+      mute8 = true;
+      mute9 = true;
+      mute10 = true;
+      mute11 = true;
+      mute12 = true;
+    } 
+    //else {
+    //  mute2 = false;
+    //  mute3 = false;
+    //  mute1 = false;
+    //  mute5 = false;
+    //  mute6 = false;
+    //  mute7 = false;
+    //  mute8 = false;
+    //  mute9 = false;
+    //  mute10 = false;
+    //  mute11 = false;
+    //  mute12 = false;
+    //}
+    
+    else if (solo5) {
       amplitude1 = 0.0;
       amplitude2 = 0.0;
       amplitude3 = 0.0;
       amplitude4 = 0.0;
-      amplitude5 = mapAudioAmp(amplitude5, 600, -300, 100);
+      amplitude5 = mapAudioAmp(amplitude5, 700, -300, 50);
       amplitude6 = 0.0;
       amplitude7 = 0.0;
       amplitude8 = 0.0;
@@ -1568,36 +1733,111 @@ void updateAmplitudes() {
       amplitude10 = 0.0;
       amplitude11 = 0.0;
       amplitude12 = 0.0;
-    }
-    if (solo6) {
+      mute2 = true;
+      mute3 = true;
+      mute4 = true;
+      mute1 = true;
+      mute6 = true;
+      mute7 = true;
+      mute8 = true;
+      mute9 = true;
+      mute10 = true;
+      mute11 = true;
+      mute12 = true;
+    } 
+    //else {
+    //  mute2 = false;
+    //  mute3 = false;
+    //  mute4 = false;
+    //  mute1 = false;
+    //  mute6 = false;
+    //  mute7 = false;
+    //  mute8 = false;
+    //  mute9 = false;
+    //  mute10 = false;
+    //  mute11 = false;
+    //  mute12 = false;
+    //}
+    
+    else if (solo6) {
       amplitude1 = 0.0;
       amplitude2 = 0.0;
       amplitude3 = 0.0;
       amplitude4 = 0.0;
       amplitude5 = 0.0;
-      amplitude6 = mapAudioAmp(amplitude6, 600, 100, -300);
+      amplitude6 = mapAudioAmp(amplitude6, 700, 50, -300);
       amplitude7 = 0.0;
       amplitude8 = 0.0;
       amplitude9 = 0.0;
       amplitude10 = 0.0;
       amplitude11 = 0.0;
       amplitude12 = 0.0;
-    }
-    if (solo7) {
+      mute2 = true;
+      mute3 = true;
+      mute4 = true;
+      mute5 = true;
+      mute1 = true;
+      mute7 = true;
+      mute8 = true;
+      mute9 = true;
+      mute10 = true;
+      mute11 = true;
+      mute12 = true;
+    } 
+    //else {
+    //  mute2 = false;
+    //  mute3 = false;
+    //  mute4 = false;
+    //  mute5 = false;
+    //  mute1 = false;
+    //  mute7 = false;
+    //  mute8 = false;
+    //  mute9 = false;
+    //  mute10 = false;
+    //  mute11 = false;
+    //  mute12 = false;
+    //}
+    
+    else if (solo7) {
       amplitude1 = 0.0;
       amplitude2 = 0.0;
       amplitude3 = 0.0;
       amplitude4 = 0.0;
       amplitude5 = 0.0;
       amplitude6 = 0.0;
-      amplitude7 = mapAudioAmp(amplitude7, 600, 500, 100);
+      amplitude7 = mapAudioAmp(amplitude7, 700, 400, 50);
       amplitude8 = 0.0;
       amplitude9 = 0.0;
       amplitude10 = 0.0;
       amplitude11 = 0.0;
       amplitude12 = 0.0;
-    }
-    if (solo8) {
+      mute2 = true;
+      mute3 = true;
+      mute4 = true;
+      mute5 = true;
+      mute6 = true;
+      mute1 = true;
+      mute8 = true;
+      mute9 = true;
+      mute10 = true;
+      mute11 = true;
+      mute12 = true;
+    } 
+    //else {
+    //  mute2 = false;
+    //  mute3 = false;
+    //  mute4 = false;
+    //  mute5 = false;
+    //  mute6 = false;
+    //  mute1 = false;
+    //  mute8 = false;
+    //  mute9 = false;
+    //  mute10 = false;
+    //  mute11 = false;
+    //  mute12 = false;
+    //}
+    
+    else if (solo8) {
       amplitude1 = 0.0;
       amplitude2 = 0.0;
       amplitude3 = 0.0;
@@ -1605,13 +1845,38 @@ void updateAmplitudes() {
       amplitude5 = 0.0;
       amplitude6 = 0.0;
       amplitude7 = 0.0;
-      amplitude8 = mapAudioAmp(amplitude8, 600, 100, 500);
+      amplitude8 = mapAudioAmp(amplitude8, 700, 50, 400);
       amplitude9 = 0.0;
       amplitude10 = 0.0;
       amplitude11 = 0.0;
       amplitude12 = 0.0;
-    }
-    if (solo9) {
+      mute2 = true;
+      mute3 = true;
+      mute4 = true;
+      mute5 = true;
+      mute6 = true;
+      mute7 = true;
+      mute1 = true;
+      mute9 = true;
+      mute10 = true;
+      mute11 = true;
+      mute12 = true;
+    } 
+    //else {
+    //  mute2 = false;
+    //  mute3 = false;
+    //  mute4 = false;
+    //  mute5 = false;
+    //  mute6 = false;
+    //  mute7 = false;
+    //  mute1 = false;
+    //  mute9 = false;
+    //  mute10 = false;
+    //  mute11 = false;
+    //  mute12 = false;
+    //}
+    
+    else if (solo9) {
       amplitude1 = 0.0;
       amplitude2 = 0.0;
       amplitude3 = 0.0;
@@ -1620,12 +1885,37 @@ void updateAmplitudes() {
       amplitude6 = 0.0;
       amplitude7 = 0.0;
       amplitude8 = 0.0;
-      amplitude9 = mapAudioAmp(amplitude9, 400, 0, 160);
+      amplitude9 = mapAudioAmp(amplitude9, 500, -50, 210);
       amplitude10 = 0.0;
       amplitude11 = 0.0;
       amplitude12 = 0.0;
-    }
-    if (solo10) {
+      mute2 = true;
+      mute3 = true;
+      mute4 = true;
+      mute5 = true;
+      mute6 = true;
+      mute7 = true;
+      mute8 = true;
+      mute1 = true;
+      mute10 = true;
+      mute11 = true;
+      mute12 = true;
+    } 
+    //else {
+    //  mute2 = false;
+    //  mute3 = false;
+    //  mute4 = false;
+    //  mute5 = false;
+    //  mute6 = false;
+    //  mute7 = false;
+    //  mute8 = false;
+    //  mute1 = false;
+    //  mute10 = false;
+    //  mute11 = false;
+    //  mute12 = false;
+    //}
+    
+    else if (solo10) {
       amplitude1 = 0.0;
       amplitude2 = 0.0;
       amplitude3 = 0.0;
@@ -1638,8 +1928,33 @@ void updateAmplitudes() {
       amplitude10 = mapAudioAmp(amplitude10, 400, 200, -40);
       amplitude11 = 0.0;
       amplitude12 = 0.0;
-    }
-    if (solo11) {
+      mute2 = true;
+      mute3 = true;
+      mute4 = true;
+      mute5 = true;
+      mute6 = true;
+      mute7 = true;
+      mute8 = true;
+      mute9 = true;
+      mute1 = true;
+      mute11 = true;
+      mute12 = true;
+    } 
+    //else {
+    //  mute2 = false;
+    //  mute3 = false;
+    //  mute4 = false;
+    //  mute5 = false;
+    //  mute6 = false;
+    //  mute7 = false;
+    //  mute8 = false;
+    //  mute9 = false;
+    //  mute1 = false;
+    //  mute11 = false;
+    //  mute12 = false;
+    //}
+    
+    else if (solo11) {
       amplitude1 = 0.0;
       amplitude2 = 0.0;
       amplitude3 = 0.0;
@@ -1650,10 +1965,35 @@ void updateAmplitudes() {
       amplitude8 = 0.0;
       amplitude9 = 0.0;
       amplitude10 = 0.0;
-      amplitude11 = mapAudioAmp(amplitude11, 400, 400, 160);
+      amplitude11 = mapAudioAmp(amplitude11, 500, 350, 210);
       amplitude12 = 0.0;
-    }
-    if (solo12) {
+      mute2 = true;
+      mute3 = true;
+      mute4 = true;
+      mute5 = true;
+      mute6 = true;
+      mute7 = true;
+      mute8 = true;
+      mute9 = true;
+      mute10 = true;
+      mute1 = true;
+      mute12 = true;
+    } 
+    //else {
+    //  mute2 = false;
+    //  mute3 = false;
+    //  mute4 = false;
+    //  mute5 = false;
+    //  mute6 = false;
+    //  mute7 = false;
+    //  mute8 = false;
+    //  mute9 = false;
+    //  mute10 = false;
+    //  mute1 = false;
+    //  mute12 = false;
+    //}
+    
+    else if (solo12) {
       amplitude1 = 0.0;
       amplitude2 =0.0;
       amplitude3 = 0.0;
@@ -1666,7 +2006,31 @@ void updateAmplitudes() {
       amplitude10 = 0.0;
       amplitude11 = 0.0;
       amplitude12 = mapAudioAmp(amplitude12, 500, 150, 360);
-    }
+      mute2 = true;
+      mute3 = true;
+      mute4 = true;
+      mute5 = true;
+      mute6 = true;
+      mute7 = true;
+      mute8 = true;
+      mute9 = true;
+      mute10 = true;
+      mute11 = true;
+      mute1 = true;
+    } 
+    //else {
+    //  mute2 = false;
+    //  mute3 = false;
+    //  mute4 = false;
+    //  mute5 = false;
+    //  mute6 = false;
+    //  mute7 = false;
+    //  mute8 = false;
+    //  mute9 = false;
+    //  mute10 = false;
+    //  mute11 = false;
+    //  mute1 = false;
+    //}
 }
 
 /*************************************************************************************
@@ -1756,6 +2120,7 @@ void resetSettings() {
      startTutorialMode = false;
      goToTutorialMode = false;
     }
+    autoPlay = false;
     // Instructions to return Cube vertex to center
     cubeCentered = false;
     if(mX < 400) {
@@ -1854,11 +2219,12 @@ void resetSettings() {
 
 /**
  * Check which key is pressed and do action
- * KEY 'T' | tutorial mode
- 
- *
  **/
 void keyPressed() {
+  if(key == 'a' || key == 'A') {
+    autoPlay = !autoPlay;
+  }
+  
   //#TUT
   if(key == 't' || key == 'T') {
     if(goToTutorialMode == false) {
@@ -1940,10 +2306,10 @@ void keyPressed() {
             mute6 = false;
             mute7 = false;
             mute8 = false;
-            amplitude5 = mapAudioAmp(amplitude5, 600, -300, 100);
-            amplitude6 = mapAudioAmp(amplitude6, 600, 100, -300);
-            amplitude7 = mapAudioAmp(amplitude7, 600, 500, 100);
-            amplitude8 = mapAudioAmp(amplitude8, 600, 100, 500);
+            amplitude5 = mapAudioAmp(amplitude5, 700, -300, 50);
+            amplitude6 = mapAudioAmp(amplitude6, 700, 50, -300);
+            amplitude7 = mapAudioAmp(amplitude7, 700, 400, 50);
+            amplitude8 = mapAudioAmp(amplitude8, 700, 50, 400);
           }
         }
       }
@@ -1978,9 +2344,9 @@ void keyPressed() {
             mute10 = false;
             mute11 = false;
             mute12 = false;
-            amplitude9 = mapAudioAmp(amplitude9, 400, 0, 160);
+            amplitude9 = mapAudioAmp(amplitude9, 500, -50, 210);
             amplitude10 = mapAudioAmp(amplitude10, 400, 200, -40);
-            amplitude11 = mapAudioAmp(amplitude11, 400, 400, 160);
+            amplitude11 = mapAudioAmp(amplitude11, 500, 350, 210);
             amplitude12 = mapAudioAmp(amplitude12, 500, 150, 360);
             solo1 = false;
             solo2 = false;
@@ -1997,6 +2363,23 @@ void keyPressed() {
           }
         }
       }
+    }
+  }
+  
+  if(key == CODED) {
+    if(keyCode == DOWN) {
+      showSoundSpace1 = false;
+      showSoundSpace2 = false;
+      showSoundSpace3 = false;
+      showSoundSpace4 = false;
+      showSoundSpace5 = false;
+      showSoundSpace6 = false;
+      showSoundSpace7 = false;
+      showSoundSpace8 = false;
+      showSoundSpace9 = false;
+      showSoundSpace10 = false;
+      showSoundSpace11 = false;
+      showSoundSpace12 = false;
     }
   }
 
@@ -2031,18 +2414,18 @@ void keyPressed() {
     randomizeList(numAudioTracks);
     //int rand = int(random(0, audioList.length));
     //println(rand);
-    audio1 = new SoundFile(this, path + audioList[randomNumList[0]]); // shuffle audio
-    audio2 = new SoundFile(this, path + audioList[randomNumList[1]]); 
-    audio3 = new SoundFile(this, path + audioList[randomNumList[2]]);
-    audio4 = new SoundFile(this, path + audioList[randomNumList[3]]);
-    audio5 = new SoundFile(this, path + audioList[randomNumList[4]]); 
-    audio6 = new SoundFile(this, path + audioList[randomNumList[5]]); 
-    audio7 = new SoundFile(this, path + audioList[randomNumList[6]]);
-    audio8 = new SoundFile(this, path + audioList[randomNumList[7]]);
-    audio9 = new SoundFile(this, path + audioList[randomNumList[8]]);
-    audio10 = new SoundFile(this, path + audioList[randomNumList[9]]);
-    audio11 = new SoundFile(this, path + audioList[randomNumList[10]]); 
-    audio12 = new SoundFile(this, path + audioList[randomNumList[11]]);
+    audio1 = new SoundFile(this, audioList[randomNumList[0]]); // shuffle audio
+    audio2 = new SoundFile(this, audioList[randomNumList[1]]); 
+    audio3 = new SoundFile(this, audioList[randomNumList[2]]);
+    audio4 = new SoundFile(this, audioList[randomNumList[3]]);
+    audio5 = new SoundFile(this, audioList[randomNumList[4]]); 
+    audio6 = new SoundFile(this, audioList[randomNumList[5]]); 
+    audio7 = new SoundFile(this, audioList[randomNumList[6]]);
+    audio8 = new SoundFile(this, audioList[randomNumList[7]]);
+    audio9 = new SoundFile(this, audioList[randomNumList[8]]);
+    audio10 = new SoundFile(this, audioList[randomNumList[9]]);
+    audio11 = new SoundFile(this, audioList[randomNumList[10]]); 
+    audio12 = new SoundFile(this, audioList[randomNumList[11]]);
     
     audio1.loop(); // loop audio
     audio2.loop();
@@ -2128,13 +2511,13 @@ void keyPressed() {
         amplitude2 = mapAudioAmp(amplitude2, 600, 400, -200);
         amplitude3 = mapAudioAmp(amplitude3, 600, -200, 400);
         amplitude4 = mapAudioAmp(amplitude4, 600, 400, 400);
-        amplitude5 = mapAudioAmp(amplitude5, 600, -300, 100);
-        amplitude6 = mapAudioAmp(amplitude6, 600, 100, -300);
-        amplitude7 = mapAudioAmp(amplitude7, 600, 500, 100);
-        amplitude8 = mapAudioAmp(amplitude8, 600, 100, 500);
-        amplitude9 = mapAudioAmp(amplitude9, 400, 0, 160);
+        amplitude5 = mapAudioAmp(amplitude5, 700, -300, 50);
+        amplitude6 = mapAudioAmp(amplitude6, 700, 50, -300);
+        amplitude7 = mapAudioAmp(amplitude7, 700, 400, 50);
+        amplitude8 = mapAudioAmp(amplitude8, 700, 50, 400);
+        amplitude9 = mapAudioAmp(amplitude9, 500, -50, 210);
         amplitude10 = mapAudioAmp(amplitude10, 400, 200, -40);
-        amplitude11 = mapAudioAmp(amplitude11, 400, 400, 160);
+        amplitude11 = mapAudioAmp(amplitude11, 500, 350, 210);
         amplitude12 = mapAudioAmp(amplitude12, 500, 150, 360);
         solo1 = false;
         mute1 = false;
@@ -2153,12 +2536,15 @@ void keyPressed() {
     } else if (ctrlPressed) {
       showSoundSpace1 = !showSoundSpace1;
     } else {  
+      if(!muteGroup1 && !solo1) {
       mute1 = !mute1;
+      }
       if (mute1) {
         amplitude1 = 0.0;
         solo1 = false;
       } else {
         amplitude1 = mapAudioAmp(amplitude1, 600, -200, -200);
+        //solo1 = false;
       }
     }
     }
@@ -2199,13 +2585,13 @@ void keyPressed() {
         amplitude2 = mapAudioAmp(amplitude2, 600, 400, -200);
         amplitude3 = mapAudioAmp(amplitude3, 600, -200, 400);
         amplitude4 = mapAudioAmp(amplitude4, 600, 400, 400);
-        amplitude5 = mapAudioAmp(amplitude5, 600, -300, 100);
-        amplitude6 = mapAudioAmp(amplitude6, 600, 100, -300);
-        amplitude7 = mapAudioAmp(amplitude7, 600, 500, 100);
-        amplitude8 = mapAudioAmp(amplitude8, 600, 100, 500);
-        amplitude9 = mapAudioAmp(amplitude9, 400, 0, 160);
+        amplitude5 = mapAudioAmp(amplitude5, 700, -300, 50);
+        amplitude6 = mapAudioAmp(amplitude6, 700, 50, -300);
+        amplitude7 = mapAudioAmp(amplitude7, 700, 400, 50);
+        amplitude8 = mapAudioAmp(amplitude8, 700, 50, 400);
+        amplitude9 = mapAudioAmp(amplitude9, 500, -50, 210);
         amplitude10 = mapAudioAmp(amplitude10, 400, 200, -40);
-        amplitude11 = mapAudioAmp(amplitude11, 400, 400, 160);
+        amplitude11 = mapAudioAmp(amplitude11, 500, 350, 210);
         amplitude12 = mapAudioAmp(amplitude12, 500, 150, 360);
         mute1 = false;
         mute2 = false;
@@ -2224,7 +2610,9 @@ void keyPressed() {
     } else if (ctrlPressed) {
       showSoundSpace2 = !showSoundSpace2;
     } else {  
+      if(!muteGroup1 && !solo2) {
       mute2 = !mute2;
+      }
       if (mute2) {
         amplitude2 = 0.0;
         solo2 = false;
@@ -2269,13 +2657,13 @@ void keyPressed() {
         amplitude2 = mapAudioAmp(amplitude2, 600, 400, -200);
         amplitude3 = mapAudioAmp(amplitude3, 600, -200, 400);
         amplitude4 = mapAudioAmp(amplitude4, 600, 400, 400);
-        amplitude5 = mapAudioAmp(amplitude5, 600, -300, 100);
-        amplitude6 = mapAudioAmp(amplitude6, 600, 100, -300);
-        amplitude7 = mapAudioAmp(amplitude7, 600, 500, 100);
-        amplitude8 = mapAudioAmp(amplitude8, 600, 100, 500);
-        amplitude9 = mapAudioAmp(amplitude9, 400, 0, 160);
+        amplitude5 = mapAudioAmp(amplitude5, 700, -300, 50);
+        amplitude6 = mapAudioAmp(amplitude6, 700, 50, -300);
+        amplitude7 = mapAudioAmp(amplitude7, 700, 400, 50);
+        amplitude8 = mapAudioAmp(amplitude8, 700, 50, 400);
+        amplitude9 = mapAudioAmp(amplitude9, 500, -50, 210);
         amplitude10 = mapAudioAmp(amplitude10, 400, 200, -40);
-        amplitude11 = mapAudioAmp(amplitude11, 400, 400, 160);
+        amplitude11 = mapAudioAmp(amplitude11, 500, 350, 210);
         amplitude12 = mapAudioAmp(amplitude12, 500, 150, 360);
         mute1 = false;
         mute2 = false;
@@ -2294,7 +2682,9 @@ void keyPressed() {
     } else if (ctrlPressed) {
       showSoundSpace3 = !showSoundSpace3;
     } else {  
+    if(!muteGroup1 && !solo3) {
       mute3 = !mute3;
+    }
       if (mute3) {
         amplitude3 = 0.0;
         solo3 = false;
@@ -2340,13 +2730,13 @@ void keyPressed() {
         amplitude2 = mapAudioAmp(amplitude2, 600, 400, -200);
         amplitude3 = mapAudioAmp(amplitude3, 600, -200, 400);
         amplitude4 = mapAudioAmp(amplitude4, 600, 400, 400);
-        amplitude5 = mapAudioAmp(amplitude5, 600, -300, 100);
-        amplitude6 = mapAudioAmp(amplitude6, 600, 100, -300);
-        amplitude7 = mapAudioAmp(amplitude7, 600, 500, 100);
-        amplitude8 = mapAudioAmp(amplitude8, 600, 100, 500);
-        amplitude9 = mapAudioAmp(amplitude9, 400, 0, 160);
+        amplitude5 = mapAudioAmp(amplitude5, 700, -300, 50);
+        amplitude6 = mapAudioAmp(amplitude6, 700, 50, -300);
+        amplitude7 = mapAudioAmp(amplitude7, 700, 400, 50);
+        amplitude8 = mapAudioAmp(amplitude8, 700, 50, 400);
+        amplitude9 = mapAudioAmp(amplitude9, 500, -50, 210);
         amplitude10 = mapAudioAmp(amplitude10, 400, 200, -40);
-        amplitude11 = mapAudioAmp(amplitude11, 400, 400, 160);
+        amplitude11 = mapAudioAmp(amplitude11, 500, 350, 210);
         amplitude12 = mapAudioAmp(amplitude12, 500, 150, 360);
         mute1 = false;
         mute2 = false;
@@ -2365,7 +2755,9 @@ void keyPressed() {
     } else if (ctrlPressed) {
       showSoundSpace4 = !showSoundSpace4;
     } else {  
+      if(!muteGroup1 && !solo4) {
       mute4 = !mute4;
+      }
       if (mute4) {
         amplitude4 = 0.0;
         solo4 = false;
@@ -2385,7 +2777,7 @@ void keyPressed() {
         amplitude3 = 0.0;
         amplitude4 = 0.0;
         mute5 = false;
-        amplitude5 = mapAudioAmp(amplitude5, 600, -300, 100);
+        amplitude5 = mapAudioAmp(amplitude5, 700, -300, 50);
         amplitude6 = 0.0;
         amplitude7 = 0.0;
         amplitude8 = 0.0;
@@ -2410,13 +2802,13 @@ void keyPressed() {
         amplitude2 = mapAudioAmp(amplitude2, 600, 400, -200);
         amplitude3 = mapAudioAmp(amplitude3, 600, -200, 400);
         amplitude4 = mapAudioAmp(amplitude4, 600, 400, 400);
-        amplitude5 = mapAudioAmp(amplitude5, 600, -300, 100);
-        amplitude6 = mapAudioAmp(amplitude6, 600, 100, -300);
-        amplitude7 = mapAudioAmp(amplitude7, 600, 500, 100);
-        amplitude8 = mapAudioAmp(amplitude8, 600, 100, 500);
-        amplitude9 = mapAudioAmp(amplitude9, 400, 0, 160);
+        amplitude5 = mapAudioAmp(amplitude5, 700, -300, 50);
+        amplitude6 = mapAudioAmp(amplitude6, 700, 50, -300);
+        amplitude7 = mapAudioAmp(amplitude7, 700, 400, 50);
+        amplitude8 = mapAudioAmp(amplitude8, 700, 50, 400);
+        amplitude9 = mapAudioAmp(amplitude9, 500, -50, 210);
         amplitude10 = mapAudioAmp(amplitude10, 400, 200, -40);
-        amplitude11 = mapAudioAmp(amplitude11, 400, 400, 160);
+        amplitude11 = mapAudioAmp(amplitude11, 500, 350, 210);
         amplitude12 = mapAudioAmp(amplitude12, 500, 150, 360);
         mute1 = false;
         mute2 = false;
@@ -2435,12 +2827,14 @@ void keyPressed() {
     } else if (ctrlPressed) {
       showSoundSpace5 = !showSoundSpace5;
     } else {  
+      if(!muteGroup2 && !solo5) {
       mute5 = !mute5;
+      }
       if (mute5) {
         amplitude5 = 0.0;
         solo5 = false;
       } else {
-        amplitude5 = mapAudioAmp(amplitude5, 600, -300, 100);
+        amplitude5 = mapAudioAmp(amplitude5, 700, -300, 50);
       }
     }
     }
@@ -2456,7 +2850,7 @@ void keyPressed() {
         amplitude4 = 0.0;
         amplitude5 = 0.0;
         mute6 = false;
-        amplitude6 = mapAudioAmp(amplitude6, 600, 100, -300);
+        amplitude6 = mapAudioAmp(amplitude6, 700, 50, -300);
         amplitude7 = 0.0;
         amplitude8 = 0.0;
         amplitude9 = 0.0;
@@ -2480,13 +2874,13 @@ void keyPressed() {
         amplitude2 = mapAudioAmp(amplitude2, 600, 400, -200);
         amplitude3 = mapAudioAmp(amplitude3, 600, -200, 400);
         amplitude4 = mapAudioAmp(amplitude4, 600, 400, 400);
-        amplitude5 = mapAudioAmp(amplitude5, 600, -300, 100);
-        amplitude6 = mapAudioAmp(amplitude6, 600, 100, -300);
-        amplitude7 = mapAudioAmp(amplitude7, 600, 500, 100);
-        amplitude8 = mapAudioAmp(amplitude8, 600, 100, 500);
-        amplitude9 = mapAudioAmp(amplitude9, 400, 0, 160);
+        amplitude5 = mapAudioAmp(amplitude5, 700, -300, 50);
+        amplitude6 = mapAudioAmp(amplitude6, 700, 50, -300);
+        amplitude7 = mapAudioAmp(amplitude7, 700, 400, 50);
+        amplitude8 = mapAudioAmp(amplitude8, 700, 50, 400);
+        amplitude9 = mapAudioAmp(amplitude9, 500, -50, 210);
         amplitude10 = mapAudioAmp(amplitude10, 400, 200, -40);
-        amplitude11 = mapAudioAmp(amplitude11, 400, 400, 160);
+        amplitude11 = mapAudioAmp(amplitude11, 500, 350, 210);
         amplitude12 = mapAudioAmp(amplitude12, 500, 150, 360);
         mute1 = false;
         mute2 = false;
@@ -2504,13 +2898,15 @@ void keyPressed() {
       }
     } else if (ctrlPressed) {
       showSoundSpace6 = !showSoundSpace6;
-    } else {  
+    } else { 
+      if(!muteGroup2 && !solo6) {
       mute6 = !mute6;
+      }
       if (mute6) {
         amplitude6 = 0.0;
         solo6 = false;
       } else {
-        amplitude6 = mapAudioAmp(amplitude6, 600, 100, -300);
+        amplitude6 = mapAudioAmp(amplitude6, 700, 50, -300);
       }
     }
     }
@@ -2527,7 +2923,7 @@ void keyPressed() {
         amplitude5 = 0.0;
         amplitude6 = 0.0;
         mute7 = false;
-        amplitude7 = mapAudioAmp(amplitude7, 600, 500, 100);
+        amplitude7 = mapAudioAmp(amplitude7, 700, 400, 50);
         amplitude8 = 0.0;
         amplitude9 = 0.0;
         amplitude10 = 0.0;
@@ -2550,13 +2946,13 @@ void keyPressed() {
         amplitude2 = mapAudioAmp(amplitude2, 600, 400, -200);
         amplitude3 = mapAudioAmp(amplitude3, 600, -200, 400);
         amplitude4 = mapAudioAmp(amplitude4, 600, 400, 400);
-        amplitude5 = mapAudioAmp(amplitude5, 600, -300, 100);
-        amplitude6 = mapAudioAmp(amplitude6, 600, 100, -300);
-        amplitude7 = mapAudioAmp(amplitude7, 600, 500, 100);
-        amplitude8 = mapAudioAmp(amplitude8, 600, 100, 500);
-        amplitude9 = mapAudioAmp(amplitude9, 400, 0, 160);
+        amplitude5 = mapAudioAmp(amplitude5, 700, -300, 50);
+        amplitude6 = mapAudioAmp(amplitude6, 700, 50, -300);
+        amplitude7 = mapAudioAmp(amplitude7, 700, 400, 50);
+        amplitude8 = mapAudioAmp(amplitude8, 700, 50, 400);
+        amplitude9 = mapAudioAmp(amplitude9, 500, -50, 210);
         amplitude10 = mapAudioAmp(amplitude10, 400, 200, -40);
-        amplitude11 = mapAudioAmp(amplitude11, 400, 400, 160);
+        amplitude11 = mapAudioAmp(amplitude11, 500, 350, 210);
         amplitude12 = mapAudioAmp(amplitude12, 500, 150, 360);
         mute1 = false;
         mute2 = false;
@@ -2575,12 +2971,14 @@ void keyPressed() {
     } else if (ctrlPressed) {
       showSoundSpace7 = !showSoundSpace7;
     } else {  
+      if(!muteGroup2 && !solo7) {
       mute7 = !mute7;
+      }
       if (mute7) {
         amplitude7 = 0.0;
         solo7 = false;
       } else {
-        amplitude7 = mapAudioAmp(amplitude7, 600, 500, 100);
+        amplitude7 = mapAudioAmp(amplitude7, 700, 400, 50);
       }
     }
     }
@@ -2598,7 +2996,7 @@ void keyPressed() {
         amplitude6 = 0.0;
         amplitude7 = 0.0;
         mute8 = false;
-        amplitude8 = mapAudioAmp(amplitude8, 600, 100, 500);
+        amplitude8 = mapAudioAmp(amplitude8, 700, 50, 400);
         amplitude9 = 0.0;
         amplitude10 = 0.0;
         amplitude11 = 0.0;
@@ -2620,13 +3018,13 @@ void keyPressed() {
         amplitude2 = mapAudioAmp(amplitude2, 600, 400, -200);
         amplitude3 = mapAudioAmp(amplitude3, 600, -200, 400);
         amplitude4 = mapAudioAmp(amplitude4, 600, 400, 400);
-        amplitude5 = mapAudioAmp(amplitude5, 600, -300, 100);
-        amplitude6 = mapAudioAmp(amplitude6, 600, 100, -300);
-        amplitude7 = mapAudioAmp(amplitude7, 600, 500, 100);
-        amplitude8 = mapAudioAmp(amplitude8, 600, 100, 500);
-        amplitude9 = mapAudioAmp(amplitude9, 400, 0, 160);
+        amplitude5 = mapAudioAmp(amplitude5, 700, -300, 50);
+        amplitude6 = mapAudioAmp(amplitude6, 700, 50, -300);
+        amplitude7 = mapAudioAmp(amplitude7, 700, 400, 50);
+        amplitude8 = mapAudioAmp(amplitude8, 700, 50, 400);
+        amplitude9 = mapAudioAmp(amplitude9, 500, -50, 210);
         amplitude10 = mapAudioAmp(amplitude10, 400, 200, -40);
-        amplitude11 = mapAudioAmp(amplitude11, 400, 400, 160);
+        amplitude11 = mapAudioAmp(amplitude11, 500, 350, 210);
         amplitude12 = mapAudioAmp(amplitude12, 500, 150, 360);
         mute1 = false;
         mute2 = false;
@@ -2645,12 +3043,14 @@ void keyPressed() {
     } else if (ctrlPressed) {
       showSoundSpace8 = !showSoundSpace8;
     } else {  
+      if(!muteGroup2 && !solo8) {
       mute8 = !mute8;
+      }
       if (mute8) {
         amplitude8 = 0.0;
         solo8 = false;
       } else {
-        amplitude8 = mapAudioAmp(amplitude8, 600, 100, 500);
+        amplitude8 = mapAudioAmp(amplitude8, 700, 50, 400);
       }
     }
     }
@@ -2669,7 +3069,7 @@ void keyPressed() {
         amplitude7 = 0.0;
         amplitude8 = 0.0;
         mute9 = false;
-        amplitude9 = mapAudioAmp(amplitude9, 400, 0, 160);
+        amplitude9 = mapAudioAmp(amplitude9, 500, -50, 210);
         amplitude10 = 0.0;
         amplitude11 = 0.0;
         amplitude12 = 0.0;
@@ -2690,13 +3090,13 @@ void keyPressed() {
         amplitude2 = mapAudioAmp(amplitude2, 600, 400, -200);
         amplitude3 = mapAudioAmp(amplitude3, 600, -200, 400);
         amplitude4 = mapAudioAmp(amplitude4, 600, 400, 400);
-        amplitude5 = mapAudioAmp(amplitude5, 600, -300, 100);
-        amplitude6 = mapAudioAmp(amplitude6, 600, 100, -300);
-        amplitude7 = mapAudioAmp(amplitude7, 600, 500, 100);
-        amplitude8 = mapAudioAmp(amplitude8, 600, 100, 500);
-        amplitude9 = mapAudioAmp(amplitude9, 400, 0, 160);
+        amplitude5 = mapAudioAmp(amplitude5, 700, -300, 50);
+        amplitude6 = mapAudioAmp(amplitude6, 700, 50, -300);
+        amplitude7 = mapAudioAmp(amplitude7, 700, 400, 50);
+        amplitude8 = mapAudioAmp(amplitude8, 700, 50, 400);
+        amplitude9 = mapAudioAmp(amplitude9, 500, -50, 210);
         amplitude10 = mapAudioAmp(amplitude10, 400, 200, -40);
-        amplitude11 = mapAudioAmp(amplitude11, 400, 400, 160);
+        amplitude11 = mapAudioAmp(amplitude11, 500, 350, 210);
         amplitude12 = mapAudioAmp(amplitude12, 500, 150, 360);
         mute1 = false;
         mute2 = false;
@@ -2714,13 +3114,15 @@ void keyPressed() {
       }
     } else if (ctrlPressed) {
       showSoundSpace9 = !showSoundSpace9;
-    } else {  
+    } else { 
+      if(!muteGroup3 && !solo9) {
       mute9 = !mute9;
+      }
       if (mute9) {
         amplitude9 = 0.0;
         solo9 = false;
       } else {
-        amplitude9 = mapAudioAmp(amplitude9, 400, 0, 160);
+        amplitude9 = mapAudioAmp(amplitude9, 500, -50, 210);
       }
     }
     }
@@ -2760,13 +3162,13 @@ void keyPressed() {
         amplitude2 = mapAudioAmp(amplitude2, 600, 400, -200);
         amplitude3 = mapAudioAmp(amplitude3, 600, -200, 400);
         amplitude4 = mapAudioAmp(amplitude4, 600, 400, 400);
-        amplitude5 = mapAudioAmp(amplitude5, 600, -300, 100);
-        amplitude6 = mapAudioAmp(amplitude6, 600, 100, -300);
-        amplitude7 = mapAudioAmp(amplitude7, 600, 500, 100);
-        amplitude8 = mapAudioAmp(amplitude8, 600, 100, 500);
-        amplitude9 = mapAudioAmp(amplitude9, 400, 0, 160);
+        amplitude5 = mapAudioAmp(amplitude5, 700, -300, 50);
+        amplitude6 = mapAudioAmp(amplitude6, 700, 50, -300);
+        amplitude7 = mapAudioAmp(amplitude7, 700, 400, 50);
+        amplitude8 = mapAudioAmp(amplitude8, 700, 50, 400);
+        amplitude9 = mapAudioAmp(amplitude9, 500, -50, 210);
         amplitude10 = mapAudioAmp(amplitude10, 400, 200, -40);
-        amplitude11 = mapAudioAmp(amplitude11, 400, 400, 160);
+        amplitude11 = mapAudioAmp(amplitude11, 500, 350, 210);
         amplitude12 = mapAudioAmp(amplitude12, 500, 150, 360);
         mute1 = false;
         mute2 = false;
@@ -2785,7 +3187,9 @@ void keyPressed() {
     } else if (ctrlPressed) {
       showSoundSpace10 = !showSoundSpace10;
     } else {  
+      if(!muteGroup3 && !solo10) {
       mute10 = !mute10;
+      }
       if (mute10) {
         amplitude10 = 0.0;
         solo10 = false;
@@ -2811,7 +3215,7 @@ void keyPressed() {
         amplitude9 = 0.0;
         amplitude10 = 0.0;
         mute11 = false;
-        amplitude11 = mapAudioAmp(amplitude11, 400, 400, 160);
+        amplitude11 = mapAudioAmp(amplitude11, 500, 350, 210);
         amplitude12 = 0.0;
         mute1 = true;
         mute2 = true;
@@ -2830,13 +3234,13 @@ void keyPressed() {
         amplitude2 = mapAudioAmp(amplitude2, 600, 400, -200);
         amplitude3 = mapAudioAmp(amplitude3, 600, -200, 400);
         amplitude4 = mapAudioAmp(amplitude4, 600, 400, 400);
-        amplitude5 = mapAudioAmp(amplitude5, 600, -300, 100);
-        amplitude6 = mapAudioAmp(amplitude6, 600, 100, -300);
-        amplitude7 = mapAudioAmp(amplitude7, 600, 500, 100);
-        amplitude8 = mapAudioAmp(amplitude8, 600, 100, 500);
-        amplitude9 = mapAudioAmp(amplitude9, 400, 0, 160);
+        amplitude5 = mapAudioAmp(amplitude5, 700, -300, 50);
+        amplitude6 = mapAudioAmp(amplitude6, 700, 50, -300);
+        amplitude7 = mapAudioAmp(amplitude7, 700, 400, 50);
+        amplitude8 = mapAudioAmp(amplitude8, 700, 50, 400);
+        amplitude9 = mapAudioAmp(amplitude9, 500, -50, 210);
         amplitude10 = mapAudioAmp(amplitude10, 400, 200, -40);
-        amplitude11 = mapAudioAmp(amplitude11, 400, 400, 160);
+        amplitude11 = mapAudioAmp(amplitude11, 500, 350, 210);
         amplitude12 = mapAudioAmp(amplitude12, 500, 150, 360);
         mute1 = false;
         mute2 = false;
@@ -2855,12 +3259,14 @@ void keyPressed() {
     } else if (ctrlPressed) {
       showSoundSpace11 = !showSoundSpace11;
     } else {  
+      if(!muteGroup3 && !solo11) {
       mute11 = !mute11;
+      }
       if (mute11) {
         amplitude11 = 0.0;
         solo11 = false;
       } else {
-        amplitude11 = mapAudioAmp(amplitude11, 400, 400, 160);
+        amplitude11 = mapAudioAmp(amplitude11, 500, 350, 210);
       }
     }
     }
@@ -2900,13 +3306,13 @@ void keyPressed() {
         amplitude2 = mapAudioAmp(amplitude2, 600, 400, -200);
         amplitude3 = mapAudioAmp(amplitude3, 600, -200, 400);
         amplitude4 = mapAudioAmp(amplitude4, 600, 400, 400);
-        amplitude5 = mapAudioAmp(amplitude5, 600, -300, 100);
-        amplitude6 = mapAudioAmp(amplitude6, 600, 100, -300);
-        amplitude7 = mapAudioAmp(amplitude7, 600, 500, 100);
-        amplitude8 = mapAudioAmp(amplitude8, 600, 100, 500);
-        amplitude9 = mapAudioAmp(amplitude9, 400, 0, 160);
+        amplitude5 = mapAudioAmp(amplitude5, 700, -300, 50);
+        amplitude6 = mapAudioAmp(amplitude6, 700, 50, -300);
+        amplitude7 = mapAudioAmp(amplitude7, 700, 400, 50);
+        amplitude8 = mapAudioAmp(amplitude8, 700, 50, 400);
+        amplitude9 = mapAudioAmp(amplitude9, 500, -50, 210);
         amplitude10 = mapAudioAmp(amplitude10, 400, 200, -40);
-        amplitude11 = mapAudioAmp(amplitude11, 400, 400, 160);
+        amplitude11 = mapAudioAmp(amplitude11, 500, 350, 210);
         amplitude12 = mapAudioAmp(amplitude12, 500, 150, 360);
         mute1 = false;
         mute2 = false;
@@ -2925,7 +3331,9 @@ void keyPressed() {
     } else if (ctrlPressed) {
       showSoundSpace12 = !showSoundSpace12;
     } else {  
+      if(!muteGroup3 && !solo12) {
       mute12 = !mute12;
+      }
       if (mute12) {
         amplitude12 = 0.0;
         solo12 = false;
@@ -2938,7 +3346,7 @@ void keyPressed() {
 }
 
 /*************************************************************************************
- MY CLASSES
+ MY CLASS
  *************************************************************************************/
 
 /**
