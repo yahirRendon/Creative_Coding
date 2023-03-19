@@ -160,20 +160,20 @@ void setup() {
   
   path = "../#data/winter/";
   // Assign audio track label to list audioList
-  audioList[0] = "140_G_VocalPads_1_TL.wav";
-  audioList[1] = "100_Beat_2_TL.wav";
-  audioList[2] = "120_Am_IntimateKeys_4_TL.wav";
-  audioList[3] = "130_Am_IntimateInstrument_Strings_4_TL.wav";
+  audioList[0] = "";
+  audioList[1] = "";
+  audioList[2] = "";
+  audioList[3] = "";
   
-  audioList[4] = "80_G_AmbientTexture_1_TL.wav";
-  audioList[5] = "100_Dm_AmbientPad_1_TL.wav";
-  audioList[6] = "120_Am_AmbientPad_2_TL.wav";
-  audioList[7] = "140_G_GranularAmbience_5_TL.wav";
+  audioList[4] = "";
+  audioList[5] = "";
+  audioList[6] = "";
+  audioList[7] = "";
   
-  audioList[8] = "100_Beat_5_TL.wav";
-  audioList[9] = "100_PercussionLoop_6_TL.wav";
-  audioList[10] = "110_Am_IntimateKeys_2_TL.wav";
-  audioList[11] = "Merged_CDG_9_CDG_10.wav";
+  audioList[8] = "";
+  audioList[9] = "";
+  audioList[10] = "";
+  audioList[11] = "";
   
   // Assign audio to SoundFile audio(1-12)
   audio1 = new SoundFile(this, path + audioList[0]); 
