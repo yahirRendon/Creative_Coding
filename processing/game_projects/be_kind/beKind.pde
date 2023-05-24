@@ -11,6 +11,7 @@
 
 import processing.sound.*;
 
+PFont font;             // adjust font
 SoundFile song;         // Create sound file object
 boolean showInfo;       // Introduction text
 float dSpin;            // Difference in spin and targetValue
@@ -40,6 +41,8 @@ color color8;
  **/
 void setup() {
   size(800, 800, FX2D);
+  font = createFont("Montserrat-Light.otf", 150);
+  textFont(font);
   preSetup(); // load initial values
 }
 
