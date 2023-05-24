@@ -12,7 +12,7 @@
       align="center"
       alt="game demo"
       width="600"  
-      src="https://github.com/yahirRendon/creative_coding/blob/main/processing/game_projects/find_mia/data/find-mia.gif" 
+      src="https://github.com/yahirRendon/creative_coding/blob/main/processing/game_projects/be_kind/data/be-kind-ex.gif" 
     />
   </a>
 </p>
